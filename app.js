@@ -16,13 +16,16 @@ app.use(session({
     key: "user_sid",
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie:{
-        expired: 48000000
+        maxAge: 48000000,
+        httpOnly: false
     }
 }));
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 app.use(express.json());
 
 // User APIs
@@ -67,6 +70,11 @@ app.post('/admin_signup', async (req, res)=>{
 });
 // Test apis end
 */
+
+app.get('/', (req, res)=>{
+    console.log(req.sessionID);
+    res.send("Hi");
+});
 
 app.listen(process.env.PORT, ()=>{
   console.log("Server Started at port:", process.env.PORT);

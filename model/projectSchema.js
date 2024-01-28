@@ -9,29 +9,25 @@ const projectSchema = new mongoose.Schema({
 	type: String,
 	required: true
     },
-    client_name:{
+    client:{
 	type: String,
 	required: true
     },
-    resources:[
-	{
-	    department: {
-		type: String
-	    },
-	    users:{
-		type: Array
-	    }
-	}
-    ],
+    resources:[],
     status:{
 	type: Boolean,
 	default: false
     },
     date:{
-	type: Date,
-	required: true
+	type: Date,// Number,
+	required: true,
+        default: Date.now()
     },
     buffer:{
+	type: Number,
+	required: true
+    },
+    deadline:{
 	type: Date,
 	required: true
     },
@@ -39,10 +35,11 @@ const projectSchema = new mongoose.Schema({
 	type: Boolean,
 	default: false
     },
-    process:{
+    template:{
 	type: String,
 	required: true
-    }
+    },
+    process:[]
 });
 	
 const templateSchema = new mongoose.Schema({
@@ -51,7 +48,7 @@ const templateSchema = new mongoose.Schema({
 	required: true
     },
     time:{
-	type: Date,
+	type: Number,
 	required: true
     },
     process:[]
@@ -63,4 +60,5 @@ projectSchema.pre('save', async function(){
 
 const Project = mongoose.model('projects', projectSchema);
 const Template = mongoose.model('templates', templateSchema);
+
 module.exports = { Project, Template };
