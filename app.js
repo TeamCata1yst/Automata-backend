@@ -24,7 +24,7 @@ app.use(session({
 }));
 
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: "https://coral-app-he6oc.ondigitalocean.app"
 }));
 app.use(express.json());
 
