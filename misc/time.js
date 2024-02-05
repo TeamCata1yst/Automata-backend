@@ -4,15 +4,16 @@ const totalTime = (start, process) => {
     let ptr = start
     var check = false
     while(true) {
-        if(process[ptr].time) {
-            time += process[ptr].time
+        console.log(process[ptr])
+        if(process[ptr].time_req) {
+            time += process[ptr].time_req
         }
         if(process[ptr].next && process[ptr].next.length > 1) {
             check = true
             alt = ptr
             break       
         }
-        if(process[ptr].next) {
+        if(process[ptr].next.length == 1) {
             ptr = process[ptr].next[0]
         } else {
             break

@@ -43,7 +43,7 @@ router.post('/template/create', async (req, res)=>{
 	const { name, process } = req.body;
 	console.log(process);
 
-	const time = totalTime(process);
+	const time = totalTime(0, process);
 	const template = new Template({ name, time, process });
 	await template.save();
 	res.json({'status':'success'});
@@ -58,17 +58,20 @@ router.post('/create', async (req, res)=>{
 	const { name, client, buffer, template, process, priority, resources, } = req.body;
 	
 	let total_time = totalTime(0, process) * buffer;
-	
+	console.log(total_time)
 	let date = Date.now();
 	let no_of_hrs = 8;
 	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
 	
-	let no_of_wd = 6;
-	for(let i=0; i < Math.floor(no_of_days/no_of_wd); i++) {
-	    date += 7*24*60*60*1000;
+	let no_of_wd = [0];
+        
+	for(let i=0; i < no_of_days; i++) {
+	    date += 24*60*60*1000;
+            if(no_of_wd.includes(new Date(date).getDay())) {
+                date += 24*60*60*1000;
+            }
 	}
-	date += (no_of_days % no_of_wd)*(24*60*60*1000);
-	
+        
 	const project = new Project({name, client, buffer, template, process, priority, deadline: date, resources});
 	await project.save();
 	res.json({'status':'success'});
