@@ -22,7 +22,8 @@ const departSchema = new mongoose.Schema({
 // User
 const userSchema = new mongoose.Schema({
     id:{
-        type: String
+        type: String,
+        default: uuidv4()
     },
     name:{
         type: String,
@@ -87,14 +88,14 @@ const adminSchema = new mongoose.Schema({
 
 adminSchema.pre('findOneAndUpdate', async function(next){
     if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password, 16);
+        this.password = bcrypt.hash(this.password, 16);
     }
     next();
 });
 
 adminSchema.pre("save", async function(next){;
     if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password, 16);
+        this.password = bcrypt.hash(this.password, 16);
     }
     next();
 });
