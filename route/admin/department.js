@@ -28,7 +28,7 @@ router.post('/create', async (req, res)=>{
     }
 });
 
-router.post('/create', async (req, res)=>{
+router.post('/delete', async (req, res)=>{
     try{
         const { name } = req.body;
         if(!name){
