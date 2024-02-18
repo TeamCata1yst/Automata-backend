@@ -13,10 +13,10 @@ router.get('/', async (_, res)=>{
     } 
 });
 
-router.get('/templates/:name', async (req, res)=>{
+router.get('/templates/:id', async (req, res)=>{
     try {
-        const { name } = req.params;
-	const result = await Template.findOne({ name });
+        const { id } = req.params;
+	const result = await Template.findOne({ _id: id });
         if(result) {
             console.log(result)
             return res.json({"status":"success", result});
@@ -55,10 +55,10 @@ router.post('/template/create', async (req, res)=>{
 
 router.post('/template/delete', async (req, res)=>{
     try {
-	const { name } = req.body;
+	const { id } = req.body;
 	console.log(process);
 
-	await Template.findOneAndDelete({ name });
+	await Template.findOneAndDelete({ _id: id });
 	res.json({'status':'success'});
     } catch(error){
 	console.log(error);
@@ -96,9 +96,9 @@ router.post('/create', async (req, res)=>{
 
 router.post('/templates/update', async (req, res)=>{
     try {
-	const { name, process } = req.body;
+	const { id, process } = req.body;
 	// checks
-	await Template.findOneAndUpdate({ name }, { process });
+	await Template.findOneAndUpdate({ _id: id }, { process });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
