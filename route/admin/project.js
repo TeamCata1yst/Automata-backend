@@ -43,8 +43,8 @@ router.post('/template/create', async (req, res)=>{
 	const { name, process } = req.body;
 	console.log(process);
 
-	const time = totalTime(0, process);
-	const template = new Template({ name, time, process });
+	//const time = totalTime(0, process);
+	const template = new Template({ name, process });
 	await template.save();
 	res.json({'status':'success'});
     } catch(error){
@@ -98,9 +98,7 @@ router.post('/template/update', async (req, res)=>{
     try {
 	const { id, process } = req.body;
 	// checks
-        const time = totalTime(0, process);
-
-	await Template.findOneAndUpdate({ _id: id }, { process, time });
+	await Template.findOneAndUpdate({ _id: id }, { process });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
