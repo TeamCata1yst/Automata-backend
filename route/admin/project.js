@@ -98,7 +98,9 @@ router.post('/template/update', async (req, res)=>{
     try {
 	const { id, process } = req.body;
 	// checks
-	await Template.findOneAndUpdate({ _id: id }, { process });
+        const time = totalTime(0, process);
+
+	await Template.findOneAndUpdate({ _id: id }, { process, time });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
