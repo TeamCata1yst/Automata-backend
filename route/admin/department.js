@@ -20,7 +20,7 @@ router.post('/create', async (req, res)=>{
             console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
-        await Department.findOneAndUpdate({ company: "company"}, { $push:{ department: { name } } });
+        await Department.findOneAndUpdate({ company: "company"}, { $push:{ department: { name: name.trim() } } });
         res.json({'status':'success'});
     } catch(error){
         console.log(error);
