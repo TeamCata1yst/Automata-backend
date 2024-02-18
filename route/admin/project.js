@@ -94,7 +94,7 @@ router.post('/create', async (req, res)=>{
     }
 });
 
-router.post('/templates/update', async (req, res)=>{
+router.post('/template/update', async (req, res)=>{
     try {
 	const { id, process } = req.body;
 	// checks
