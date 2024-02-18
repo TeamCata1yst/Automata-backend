@@ -53,6 +53,19 @@ router.post('/template/create', async (req, res)=>{
     }
 });
 
+router.post('/template/delete', async (req, res)=>{
+    try {
+	const { name } = req.body;
+	console.log(process);
+
+	await Template.findOneAndDelete({ name });
+	res.json({'status':'success'});
+    } catch(error){
+	console.log(error);
+	res.status(500).json({'status':'failed', 'error':'internal error'});
+    }
+});
+
 router.post('/create', async (req, res)=>{
     try {
 	const { name, client, buffer, template, process, priority, resources, } = req.body;

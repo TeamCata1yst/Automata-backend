@@ -43,6 +43,10 @@ const projectSchema = new mongoose.Schema({
 });
 	
 const templateSchema = new mongoose.Schema({
+    id:{
+        type: String,
+        required: true
+    },
     name:{
 	type: String,
 	required: true
@@ -55,6 +59,14 @@ const templateSchema = new mongoose.Schema({
 });
 
 projectSchema.pre('save', async function(){
+    this.id = uuidv4();
+});
+
+templateSchema.pre('save', async function(){
+    this.id = uuidv4();
+});
+
+projectSchema.pre('findOneAndUpdate', async function(){
     this.id = uuidv4();
 });
 
