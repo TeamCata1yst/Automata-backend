@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { totalTime } = require('../misc/time');
+//const { totalTime } = require('../misc/time');
 const { v4: uuidv4 } = require('uuid');
 
 const projectSchema = new mongoose.Schema({
@@ -57,7 +57,7 @@ const templateSchema = new mongoose.Schema({
 projectSchema.pre('save', async function(){
     this.id = uuidv4();
 });
-
+/*
 templateSchema.pre('save', async function(){
     this.time = totalTime(0, this.process)
 });
@@ -65,7 +65,7 @@ templateSchema.pre('save', async function(){
 templateSchema.pre('findOneAndUpdate', async function(){
     this.time = totalTime(0, this.process)
 });
-
+*/
 const Project = mongoose.model('projects', projectSchema);
 const Template = mongoose.model('templates', templateSchema);
 
