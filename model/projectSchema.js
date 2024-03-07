@@ -33,8 +33,7 @@ const projectSchema = new mongoose.Schema({
 	required: true
     },
     priority:{
-	type: Boolean,
-	default: false
+	type: Number
     },
     template:{
 	type: String,

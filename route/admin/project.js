@@ -68,7 +68,7 @@ router.post('/template/delete', async (req, res)=>{
 
 router.post('/create', async (req, res)=>{
     try {
-	const { name, client, buffer, template, process, priority, resources, } = req.body;
+	const { name, client, buffer, template, process, resources, } = req.body;
 	
 	let total_time = totalTime(0, process) * buffer;
 	console.log(total_time)
@@ -84,7 +84,7 @@ router.post('/create', async (req, res)=>{
                 date += 24*60*60*1000;
             }
 	}
-        
+        const priority = await Project.countDocuments();
 	const project = new Project({name, client, buffer, template, process, priority, deadline: date, resources});
 	await project.save();
 	res.json({'status':'success'});
@@ -115,6 +115,24 @@ router.post('/template/update', async (req, res)=>{
     } catch(error) {
 	console.log(error);
 	res.status(500).json({'status':'failed', 'error':'internal error'});
+    }
+});
+
+router.post('/priority', async (req, res) => {
+    try {
+        const { id, priority, inc} = req.body;
+        console.log(req.body);
+        if(inc) {
+            await Project.findOneAndUpdate({ priority: priority+1}, { priority });
+            await Project.findOneAndUpdate({ id }, { priority: priority+1});
+        } else {
+            await Project.findOneAndUpdate({ priority: priority-1}, {priority: priority});
+            await Project.findOneAndUpdate({ id }, { priority: priority-1})
+        }
+        res.json({'status':'success'});
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({});
     }
 });
 
