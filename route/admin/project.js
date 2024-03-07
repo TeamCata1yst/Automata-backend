@@ -98,7 +98,7 @@ router.post('/delete', async (req, res)=>{
     try {
         const { id } = req.body;
         const val = await Project.findOneAndDelete({ id });
-        Project.updateMany({ priority:{ $gt: val.priority} }, { $inc: { priority: 1}});
+        await Project.updateMany({ priority:{ $gt: val.priority} }, { $inc: { priority: -1}});
         res.json({'status':'success'});
     } catch(error) {
         res.status(500).json({"status":"failed", "error":"internal error"});
