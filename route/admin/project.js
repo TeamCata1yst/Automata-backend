@@ -44,7 +44,7 @@ router.post('/template/create', async (req, res)=>{
 	console.log(process);
 
 	const time = totalTime(0, process);
-	const template = new Template({ name, process });
+	const template = new Template({ name, process, time });
 	await template.save();
 	res.json({'status':'success'});
     } catch(error){
