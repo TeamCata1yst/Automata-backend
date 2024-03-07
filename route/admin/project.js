@@ -94,6 +94,17 @@ router.post('/create', async (req, res)=>{
     }
 });
 
+router.post('/delete', async (req, res)=>{
+    try {
+        const { id } = req.body;
+        await Project.findOneAndDelete({ id });
+        res.json({'status':'success'});
+    } catch(error) {
+        res.status(500).json({"status":"failed", "error":"internal error"});
+        console.log(error)
+    }
+});
+
 router.post('/template/update', async (req, res)=>{
     try {
 	const { id, process } = req.body;
