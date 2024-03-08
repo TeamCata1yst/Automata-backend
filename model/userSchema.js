@@ -57,15 +57,12 @@ userSchema.pre('findOneAndUpdate', async function(next){
     }
     next();
 });
-
-userSchema.pre("save", async function(next){   
-    if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password, 16);
-    }
+*/
+userSchema.pre("save", async function(next){
     this.id = uuidv4();
     next();
 });
-*/
+
 // Admin
 const adminSchema = new mongoose.Schema({
     firstname:{
