@@ -73,7 +73,7 @@ router.post('/create', async (req, res)=>{
 	let total_time = totalTime(0, process) * buffer;
 	console.log(total_time)
 	let date = Date.now();
-	let no_of_hrs = 8;
+	let no_of_hrs = 8.5;
 	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
 	
 	let no_of_wd = [0];
@@ -84,6 +84,10 @@ router.post('/create', async (req, res)=>{
                 date += 24*60*60*1000;
             }
 	}
+        process.forEach((_, index) => {
+            process[index].remark = ""
+            process[index].status = 0
+        })
         const priority = await Project.countDocuments();
 	const project = new Project({name, client, buffer, template, process, priority, deadline: date, resources});
 	await project.save();

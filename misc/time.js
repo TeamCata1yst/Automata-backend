@@ -32,6 +32,12 @@ const totalTime = (start, process) => {
     return time + maxTime
 }
 
+const endTime = (time, buffer) => {
+    const curr = Date.now();
+    // Later for precise timing
+    // mark the deadline of each tash
+    // this would require you to implement the same logic as totaltime
+    
+}
 
-
-module.exports = { totalTime };
+module.exports = { totalTime, endTime };

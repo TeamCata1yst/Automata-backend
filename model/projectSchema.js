@@ -20,9 +20,8 @@ const projectSchema = new mongoose.Schema({
 	default: false
     },
     date:{
-	type: Date,// Number,
-	required: true,
-        default: Date.now()
+	type: Date// Number,
+	
     },
     buffer:{
 	type: Number,
@@ -55,6 +54,8 @@ const templateSchema = new mongoose.Schema({
 
 projectSchema.pre('save', async function(){
     this.id = uuidv4();
+    this.date = Date.now();
+
 });
 /*
 templateSchema.pre('save', async function(){
