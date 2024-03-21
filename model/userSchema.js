@@ -22,8 +22,7 @@ const departSchema = new mongoose.Schema({
 // User
 const userSchema = new mongoose.Schema({
     id:{
-        type: String,
-        default: uuidv4()
+        type: String
     },
     name:{
         type: String,

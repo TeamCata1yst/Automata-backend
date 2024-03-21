@@ -38,6 +38,22 @@ router.get('/templates', async (_, res)=>{
     }
 });
 
+router.post('/template/copy', async (req, res) => {
+    try {
+        const { id } = req.body;
+        console.log(req.body)
+        const val = await Template.findOne({ _id: id })
+        if(val) {
+            console.log(val)
+            const template = new Template({ name: val.name + " (copy)", process: val.process, time: val.time})
+            await template.save()
+        }
+        res.json({'status':'success'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({'status':'success'});
+    }
+})
 router.post('/template/create', async (req, res)=>{
     try {
 	const { name, process } = req.body;
@@ -112,10 +128,10 @@ router.post('/delete', async (req, res)=>{
 
 router.post('/template/update', async (req, res)=>{
     try {
-	const { id, process } = req.body;
+	const { id, name, process } = req.body;
 	// checks
         const time = totalTime(0, process);
-	await Template.findOneAndUpdate({ _id: id }, { process, time });
+	await Template.findOneAndUpdate({ _id: id }, { name, process, time });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
