@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-//const { totalTime } = require('../misc/time');
+const { totalTime } = require('../misc/time');
 const { v4: uuidv4 } = require('uuid');
 
 const projectSchema = new mongoose.Schema({
@@ -13,6 +13,10 @@ const projectSchema = new mongoose.Schema({
     client:{
 	type: String,
 	required: true
+    },
+    client_id: {
+        type: String,
+        required: true
     },
     resources:[],
     status:{
@@ -38,6 +42,9 @@ const projectSchema = new mongoose.Schema({
 	type: String,
 	required: true
     },
+    buffer_deadline:{
+        type: String
+    },
     process:[]
 });
 	
@@ -55,7 +62,6 @@ const templateSchema = new mongoose.Schema({
 projectSchema.pre('save', async function(){
     this.id = uuidv4();
     this.date = Date.now();
-
 });
 /*
 templateSchema.pre('save', async function(){

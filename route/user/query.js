@@ -1,9 +1,18 @@
 const router = require('express').Router()
+const { Project } = require('../../model/projectSchema')
 const { Query } = require('../../model/querySchema')
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const queries = await Query.find({})
+        const { id } = req.body
+        const val = await Project.find({ resources: id})
+        var arr = []
+        console.log(val)
+        val.forEach((ele, i)=>{
+            arr.push(ele.id)
+        })
+        console.log(arr)
+        const queries = await Query.find({ project_id: { "$in": arr }})
         res.json({'status':'success', 'result': queries})
     } catch(error) {
         console.log(error)

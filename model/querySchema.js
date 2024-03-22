@@ -1,27 +1,31 @@
 const mongoose = require('mongoose')
 const {v4: uuidv4 } = require('uuid')
 
-const schema = mongoose.Schema({
+const schema = new mongoose.Schema({
     id: {
         type: String
     },
-    client: {
+    client_id: {
         type: String
     },
     project_id: {
-        type: string
+        type: String
     },
-    query: {
+    subject: {
+        type: String
+    },
+    description:{
         type: String
     },
     status: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 });
 
-schema.pre('save', (next) => {
-    this.id = uuidv4()
+schema.pre('save', function() {
+    this.id = uuidv4();
 })
 
-const Query = new mongoose.model('queries', schema)
+const Query = mongoose.model('queries', schema)
 module.exports = { Query }

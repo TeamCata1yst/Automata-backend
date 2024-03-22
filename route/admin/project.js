@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Project, Template } = require('../../model/projectSchema');
+const { Client } = require('../../model/userSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 const { totalTime } = require('../../misc/time');
 
@@ -84,7 +85,7 @@ router.post('/template/delete', async (req, res)=>{
 
 router.post('/create', async (req, res)=>{
     try {
-	const { name, client, buffer, template, process, resources, } = req.body;
+	const { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
 	
 	let total_time = totalTime(0, process) * buffer;
 	console.log(total_time)
@@ -104,10 +105,21 @@ router.post('/create', async (req, res)=>{
             process[index].remark = ""
             process[index].status = 0
         })
+        
+        var val = await Client.findOne({ $or: [{ email }, { mobile_no }] })
+        if(val) {
+            await Project.updateMany({ client: val.name }, { client} )
+            await Client.findOneAndUpdate({ email, mobile_no, name: client }) 
+        } else {
+            val = new Client({ email, mobile_no, name: client })
+            await val.save()
+        }
+        
         const priority = await Project.countDocuments();
-	const project = new Project({name, client, buffer, template, process, priority, deadline: date, resources});
+	const project = new Project({name, client, client_id: val.id, buffer, template, process, priority, deadline: date, resources});
 	await project.save();
-	res.json({'status':'success'});
+
+        res.json({'status':'success'});
     } catch(error){
 	console.log(error);
 	res.status(500).json({'status':'failed', 'error':'internal error'});

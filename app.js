@@ -30,10 +30,12 @@ app.use(express.json());
 
 // User APIs
 app.use('/user/auth', require('./route/user/auth'));
+app.use('/user/query', require('./route/user/query'));
 app.use('/user/project', require('./route/user/project'));
 
 // Client APIs
-app.use('/client/auth', require('./route/user/auth'));
+app.use('/client/auth', require('./route/client/auth'));
+app.use('/client/dashboard', require('./route/client/dashboard'));
 
 // Admin APIs
 app.use('/admin/auth', require('./route/admin/auth'));
@@ -48,28 +50,6 @@ app.get('/auth/logout', (req, res)=>{
     req.session.destroy();
     res.json({'status':'success'});
 });
-
-/*
-// Test apis start
-const { User, Admin } = require('./model/userSchema');
-
-app.get('/auth_check', (req, res)=>{
-    res.json({'status':req.session});
-});
-
-app.post('/user_signup', async (req, res)=>{
-    const test = new User(req.body);
-    await test.save();
-    res.json({'status':'success'});
-});
-
-app.post('/admin_signup', async (req, res)=>{
-    const test = new Admin(req.body);
-    await test.save();
-    res.json({'status':'success'});
-});
-// Test apis end
-*/
 
 app.get('/', (req, res)=>{
     console.log(req.sessionID);
