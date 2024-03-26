@@ -1,10 +1,11 @@
 const router = require('express').Router()
 const { Project } = require('../../model/projectSchema')
 const { Query } = require('../../model/querySchema')
+const { isUser } = require('../../middleware/priv_check')
 
-router.post('/', async (req, res) => {
+router.get('/', isUser, async (req, res) => {
     try {
-        const { id } = req.body
+        const { id } = req.session;
         const val = await Project.find({ resources: id})
         var arr = []
         console.log(val)
@@ -20,7 +21,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.post('/resolve', async (req, res) => {
+router.post('/resolve', isUser, async (req, res) => {
     try {
         const { query_id, remark } = req.body;
         await Query.findOneAndUpdate({id: query_id, status: true, remark})

@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const { Query } = require('../../model/querySchema');
 const { Project } = require('../../model/projectSchema');
+const { isClient } = require('../../middleware/priv_check');
 
-router.post('/projects', async (req, res) =>{
+router.get('/projects', isClient, async (req, res) =>{
     try {
-        const { id } = req.body;
-        
+        const { id } = req.session;
         
         const project = await Project.find({ client_id: id });
         res.json({ 'status': 'success', 'result': project })
@@ -15,9 +15,9 @@ router.post('/projects', async (req, res) =>{
     }
 })
 
-router.post('/queries', async (req, res) =>{
+router.get('/queries', isClient, async (req, res) =>{
     try {
-        const { id } = req.body;
+        const { id } = req.session;
         const result = await Query.find({ client_id: id });
         res.json({'status':'success', result}) 
     } catch(err) {
@@ -26,7 +26,7 @@ router.post('/queries', async (req, res) =>{
     }
 });
 
-router.post('/queries/add', async (req, res) =>{
+router.post('/queries/add', isClient, async (req, res) =>{
     try {
         const {project_id, client_id, subject, description} = req.body;
         const project = new Query({ project_id, client_id, subject, description })

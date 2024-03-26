@@ -3,96 +3,10 @@ const { isUser } = require('../../middleware/priv_check');
 const { Project } = require('../../model/projectSchema');
 
 
-
-
-
-
-/*
-
-if(now_h > 19) {
-                if(now_d == 6) {
-                    time.setHours(9)
-
-                    tasks.push({ date: new Date(time), tasks: [...temp]})
-                    temp = []
-
-                    time.setDate(time.getDate() + 2)
-                    
-                    temp.push(task)
-                } else {
-                    time.setHours(9)
-                    tasks.push({ date: new Date(time), tasks: [...temp]})
-                    temp = []
-
-                    time.setDate(time.getDate() + 1)
-                     
-                    temp.push(task)
-                }
-            } else {
-                let a = new Date(time + task.time_req).getHours() 
-                if(a <= 19 && a >= 9 && now_d != 0) { 
-                    console.log(time)
-                    let val = new Date(task.time_req)
-                    
-                    time.setHours(time.getHours() + val.getHours())
-                    time.setMinutes(time.getMinutes() + val.getMinutes())
-                    
-                    temp.push(task)
-                } else if(a > 19 && a <= 24){
-                    if(now_d == 6) {
-                        time.setHours(9)
-
-                        tasks.push({ date: new Date(time), tasks: [...temp]})
-                        temp = []
-
-                        time.setDate(time.getDate() + 2) 
-                           
-                        temp.push(task)
-                    } else {
-                        time.setHours(9)
-
-                        tasks.push({ date: new Date(time), tasks: [...temp]})
-                        temp = []
-
-                        time.setDate(time.getDate() + 1)
-                        
-                        temp.push(task)
-                    }
-                } else {
-                     if(now_d == 0) {
-                        time.setHours(9)
-
-                        tasks.push({ date: new Date(time), tasks: [...temp]})
-                        temp = []
-
-                        time.setDate(time.getDate() + 1) 
-                           
-                        temp.push(task)
-                    } else {
-                        time.setHours(9)
-
-                        tasks.push({ date: new Date(time), tasks: [...temp]})
-                        temp = []
-
-                        time.setDate(time.getDate())
-                        
-                        temp.push(task)
-                    }                   
-                }
-            }
-            
-
-*/
-
-
-
-
-
-
-
-router.post('/', /*isUser,*/ async (req, res)=>{
+// LOGICAL ERRORRRRRRR
+router.get('/', isUser, async (req, res)=>{
     try {
-        const { id } = req.body;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
+        const { id } = req.session;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
 	const projects = await Project.find({ resources: id });
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
@@ -102,7 +16,7 @@ router.post('/', /*isUser,*/ async (req, res)=>{
                 if(elem.selected_resource == id) {
                     elem.project_name = project.name;
                     elem.project_id = project.id
-                    elem.date = project.date;
+                    elem.date = project.date
                     elem.priority = project.priority;
 
                     arr.push(elem)
@@ -115,10 +29,12 @@ router.post('/', /*isUser,*/ async (req, res)=>{
         var tasks = [];
 
         arr.forEach((task, _) => {
+            console.log(time.getDate(), new Date(task.date).getDate())
+            if(time.getDate() < new Date(task.date).getDate()) {
+                 time = task.date
+            }
             let now_d = time.getDay();
-            let now_h = time.getHours();
-            console.log(now_d, now_h, time)
-
+            
             if(now_d == 0) {
                 time.setHours(9)
                 time.setDate(time.getDate() + 1)
@@ -132,15 +48,16 @@ router.post('/', /*isUser,*/ async (req, res)=>{
                     time.setMinutes(time.getMinutes() + val.getMinutes())
                     
                     temp.push(task)
-                } else {
+                } else { 
+                    
                     time.setHours(9)
                     tasks.push({ date: new Date(time), tasks: [...temp]})
                     temp = []
 
                     temp.push(task)
-
-                    if(a < 9 && a >= 0)
-                        time.setDate(time.getDate() + 1)
+                    if(!(a < 9 && a >= 0))
+                        time.setDate(time.getDate() + 1) 
+                   
                 }
             }
         });
@@ -154,7 +71,7 @@ router.post('/', /*isUser,*/ async (req, res)=>{
     }
 });
 
-router.post('/task', async (req, res)=>{
+router.post('/task', isUser, async (req, res)=>{
     try {
 	const { project_id, task_id, user_id } = req.body;
         console.log(req.body)

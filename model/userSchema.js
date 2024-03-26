@@ -73,26 +73,31 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    /*password:{
+    password:{
         type: String,
     
-    }*/
+    }
 });
 
 clientSchema.pre("save", async function(next){
     this.id = uuidv4();
+    
+    var password = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var length = characters.length;
+    for (var i = 0; i < 12; i++) {
+        password += characters.charAt(Math.floor(Math.random() * length));
+    }
+
+    this.password = password;
     next();
 });
 
 // Admin
 const adminSchema = new mongoose.Schema({
-    firstname:{
+    name:{
         type: String,
         required: true
-    },
-    lastname:{
-        type: String,
-        required: false
     },
     email:{
         type: String,
@@ -106,15 +111,13 @@ const adminSchema = new mongoose.Schema({
 
 adminSchema.pre('findOneAndUpdate', async function(next){
     if(this.isModified("password")){
-        this.password = bcrypt.hash(this.password, 16);
+        this.password = await bcrypt.hash(this.password, 16);
     }
     next();
 });
 
 adminSchema.pre("save", async function(next){;
-    if(this.isModified("password")){
-        this.password = bcrypt.hash(this.password, 16);
-    }
+    this.password = await bcrypt.hash(this.password, 16);
     next();
 });
 

@@ -1,9 +1,8 @@
 const router = require('express').Router();
 const { Department } = require('../../model/userSchema');
-//const Project = require('../../model/projectSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 
-router.get('/', async (req, res)=>{
+router.get('/', isAdmin, async (_, res)=>{
     try{
         const list = await Department.findOne({ company: 'company'});
         res.json({ 'status':'success', 'result': list.department });
@@ -13,7 +12,7 @@ router.get('/', async (req, res)=>{
     }
 });
 
-router.post('/create', async (req, res)=>{
+router.post('/create', isAdmin, async (req, res)=>{
     try{
         const { name } = req.body;
         if(!name){
@@ -28,7 +27,7 @@ router.post('/create', async (req, res)=>{
     }
 });
 
-router.post('/delete', async (req, res)=>{
+router.post('/delete', isAdmin, async (req, res)=>{
     try{
         const { name } = req.body;
         if(!name){

@@ -4,7 +4,7 @@ const { Client } = require('../../model/userSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 const { totalTime } = require('../../misc/time');
 
-router.get('/', async (_, res)=>{
+router.get('/', isAdmin, async (_, res)=>{
     try {
 	const projects = await Project.find({});
 	res.json(projects);
@@ -14,7 +14,7 @@ router.get('/', async (_, res)=>{
     } 
 });
 
-router.get('/templates/:id', async (req, res)=>{
+router.get('/templates/:id', isAdmin, async (req, res)=>{
     try {
         const { id } = req.params;
 	const result = await Template.findOne({ _id: id });
@@ -29,7 +29,7 @@ router.get('/templates/:id', async (req, res)=>{
     } 
 });
 
-router.get('/templates', async (_, res)=>{
+router.get('/templates', isAdmin, async (_, res)=>{
     try {
 	const templates = await Template.find({});
 	res.json(templates);
@@ -39,7 +39,7 @@ router.get('/templates', async (_, res)=>{
     }
 });
 
-router.post('/template/copy', async (req, res) => {
+router.post('/template/copy', isAdmin, async (req, res) => {
     try {
         const { id } = req.body;
         console.log(req.body)
@@ -55,7 +55,7 @@ router.post('/template/copy', async (req, res) => {
         res.status(500).json({'status':'success'});
     }
 })
-router.post('/template/create', async (req, res)=>{
+router.post('/template/create', isAdmin, async (req, res)=>{
     try {
 	const { name, process } = req.body;
 	console.log(process);
@@ -70,7 +70,7 @@ router.post('/template/create', async (req, res)=>{
     }
 });
 
-router.post('/template/delete', async (req, res)=>{
+router.post('/template/delete', isAdmin, async (req, res)=>{
     try {
 	const { id } = req.body;
 	console.log(process);
@@ -83,7 +83,7 @@ router.post('/template/delete', async (req, res)=>{
     }
 });
 
-router.post('/create', async (req, res)=>{
+router.post('/create', isAdmin, async (req, res)=>{
     try {
 	const { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
 	
@@ -126,7 +126,7 @@ router.post('/create', async (req, res)=>{
     }
 });
 
-router.post('/delete', async (req, res)=>{
+router.post('/delete', isAdmin, async (req, res)=>{
     try {
         const { id } = req.body;
         const val = await Project.findOneAndDelete({ id });
@@ -138,7 +138,7 @@ router.post('/delete', async (req, res)=>{
     }
 });
 
-router.post('/template/update', async (req, res)=>{
+router.post('/template/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, process } = req.body;
 	// checks
@@ -151,7 +151,7 @@ router.post('/template/update', async (req, res)=>{
     }
 });
 
-router.post('/priority', async (req, res) => {
+router.post('/priority', isAdmin, async (req, res) => {
     try {
         const { id, priority, inc} = req.body;
         console.log(req.body);

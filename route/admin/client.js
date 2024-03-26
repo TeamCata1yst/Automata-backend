@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { Client } = require('../../model/userSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 
-router.get('/', async (_, res)=>{
+router.get('/', isAdmin, async (_, res)=>{
     try{
         const list = await Client.find({});
         res.json({ 'status':'success', 'result': list });
@@ -14,13 +14,13 @@ router.get('/', async (_, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try{
-        const { name, email, mobile_no, password } = req.body;
+        const { name, email, mobile_no } = req.body;
         
-        if(!name || !email || !mobile_no || !password){
+        if(!name || !email || !mobile_no ){
             console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
-        const client = new Client({ name, email, mobile_no, password });
+        const client = new Client({ name, email, mobile_no });
         await client.save();
         res.json({'status':'success'});
     } catch(error){

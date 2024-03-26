@@ -11,18 +11,6 @@ mongoose.connect(process.env.DB_ADDR).then(()=>{
     process.exit(-1);
 });
 
-const session = require('express-session');
-app.use(session({
-    key: "user_sid",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie:{
-        maxAge: 48000000,
-        httpOnly: false
-    }
-}));
-
 app.use(cors({
     origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000"]
 }));
@@ -44,17 +32,6 @@ app.use('/admin/client', require('./route/admin/client'));
 app.use('/admin/profile', require('./route/admin/profile'));
 app.use('/admin/project', require('./route/admin/project'));
 app.use('/admin/department', require('./route/admin/department'))
-
-// Common
-app.get('/auth/logout', (req, res)=>{
-    req.session.destroy();
-    res.json({'status':'success'});
-});
-
-app.get('/', (req, res)=>{
-    console.log(req.sessionID);
-    res.send("Hi");
-});
 
 app.listen(process.env.PORT, ()=>{
   console.log("Server Started at port:", process.env.PORT);
