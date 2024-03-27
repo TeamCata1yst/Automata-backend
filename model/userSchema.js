@@ -109,18 +109,6 @@ const adminSchema = new mongoose.Schema({
     }
 });
 
-adminSchema.pre('findOneAndUpdate', async function(next){
-    if(this.isModified("password")){
-        this.password = await bcrypt.hash(this.password, 16);
-    }
-    next();
-});
-
-adminSchema.pre("save", async function(next){;
-    this.password = await bcrypt.hash(this.password, 16);
-    next();
-});
-
 // Collection Objects
 const User = mongoose.model('user', userSchema);
 const Admin = mongoose.model('admin', adminSchema);

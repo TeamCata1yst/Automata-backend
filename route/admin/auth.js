@@ -15,17 +15,14 @@ router.post("/", (req, res) => {
                     if (!user) {
                         return res.status(401).json({ 'status':'success', 'error':'invalid credentials' });
                     }
-                    bcrypt.compare(password, user.password, (err, result) => {
-                        if (err) {
-                            return res.status(401).json({ 'status':'success', 'error':'invalid credentials' });
-                        }
-                        if (result) {
-                            var data = { admin: true, name: user.name, email: user.email };
-                            var token = jwt.sign(data, process.env.SECRET);
-                            return res.status(200).json({ 'status':'success', 'Token': token });
-                        }
-                        res.status(401).json({ 'status':'success', 'error':'invalid credentials' });
-                    });
+                    
+                    if (password == user.password) {
+                        var data = { admin: true, name: user.name, email: user.email };
+                        var token = jwt.sign(data, process.env.SECRET);
+                        return res.status(200).json({ 'status':'success', 'Token': token });
+                    }
+                    res.status(401).json({ 'status':'success', 'error':'invalid credentials' });
+                    
                 })
                 .catch(err => {
                     console.log(err);

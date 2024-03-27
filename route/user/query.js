@@ -21,10 +21,25 @@ router.get('/', isUser, async (req, res) => {
     }
 })
 
+router.get('/:id', isUser, async (req, res)=> {
+    try {
+        const { id } = req.params;
+        const val = await Query.findOne({ id })
+        if(val) {
+            const project = await Project.findOne({id: val.project_id})
+            return res.json({'status':'success', 'result': { ...val['_doc'], project_name: project.name }})
+        }
+        res.json({'status':'failed', 'error':'no such query exists'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({'status':'failed', 'error':'internal error'})
+    }
+})
+
 router.post('/resolve', isUser, async (req, res) => {
     try {
         const { query_id, remark } = req.body;
-        await Query.findOneAndUpdate({id: query_id, status: true, remark})
+        await Query.findOneAndUpdate({id: query_id }, { status: true, remark})
         res.json({'status':'success'})
     } catch(error) {
         console.log(error)
