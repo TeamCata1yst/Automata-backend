@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const { User, Department } = require('../../model/userSchema');
-//const Project = require('../../model/projectSchema');
+const { Project } = require('../../model/projectSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 
 
-router.get('/', async (_, res) => {
+router.get('/', isAdmin, async (_, res) => {
     try {
 	const users = await User.find({});
 	users.forEach( (user) => {
@@ -17,7 +17,7 @@ router.get('/', async (_, res) => {
     }
 });
 
-router.get('/:dep_name', async (req, res)=>{
+router.get('/:dep_name', isAdmin, async (req, res)=>{
     try{
 	const { dep_name } = req.params;
 	const depExist = await Department.findOne({company: 'company', department: { $elemMatch:{ name: dep_name } }});
@@ -38,7 +38,7 @@ router.get('/:dep_name', async (req, res)=>{
     }
 });
 
-router.post('/create', async (req, res)=>{
+router.post('/create', isAdmin, async (req, res)=>{
     try{
         const { name, gender, department, email, mobile_no } = req.body;
 	console.log("Create: ") 
@@ -64,7 +64,7 @@ router.post('/create', async (req, res)=>{
     }
 });
 
-router.post('/delete', async (req, res)=>{
+router.post('/delete', isAdmin, async (req, res)=>{
     try{
         const { id } = req.body;
 	console.log("Delete: ")
@@ -82,5 +82,34 @@ router.post('/delete', async (req, res)=>{
         res.status(500).json({'status':'failed', 'error':'internal error'});
     }
 });
+
+router.post('/tasks', isAdmin, async (req, res) => {
+    try {
+        const { id } = req.body;
+        
+        const projects = await Project.find({ resources: id });
+        projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
+    
+        const arr = [];
+        projects.forEach( (project, _) => {
+            project.process.forEach( (elem, _) => {
+                if(elem.selected_resource == id) {
+                    elem.project_name = project.name;
+                    elem.project_id = project.id
+                    elem.date = project.date
+                    elem.priority = project.priority;
+
+                    arr.push(elem)
+                }
+            });
+	});
+        
+        res.json({'status':'success', 'result': arr});
+
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({'status':'failed', 'error':'internal error'})
+    }
+})
 
 module.exports = router;

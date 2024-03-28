@@ -1,12 +1,42 @@
-const totalTime = (start, process) => {
-    var time = 0;
+const totalTime = (start, now_t, process) => {
+    var time = 0
     var alt = 0
     let ptr = start
     var check = false
     while(true) {
-        console.log(process[ptr])
         if(process[ptr].time_req) {
             time += process[ptr].time_req
+            if(now_t != 0) {
+                let now_d = now_t.getDay();
+
+                if(now_d == 0) {
+                    now_t.setHours(9)
+                    now_t.setDate(now_t.getDate() + 1)
+                }
+            
+                let a = new Date(now_t + process[ptr].time_req).getHours() 
+            
+                if(a <= 19 && a >= 9) { 
+                    let val = new Date(process[ptr].time_req)
+                    
+                    now_t.setHours(now_t.getHours() + val.getHours())
+                    now_t.setMinutes(now_t.getMinutes() + val.getMinutes())
+                    
+                    var n = new Date()
+                    n.setHours(17, 30)
+                    n.setDate(now_t.getDate())
+                    process[ptr].deadline = n
+                } else { 
+                    now_t.setHours(9)
+                    if(!(a < 9 && a >= 0))
+                        now_t.setDate(now_t.getDate() + 1) 
+                        
+                    var n = new Date()
+                    n.setHours(17, 30)
+                    n.setDate(now_t.getDate())
+                    process[ptr].deadline = n
+                }
+            }
         }
         if(process[ptr].next && process[ptr].next.length > 1) {
             check = true
@@ -22,22 +52,13 @@ const totalTime = (start, process) => {
     var maxTime = 0 
     if(check) {
         process[alt].next.forEach(i => {
-            console.log(i)
-            let t = totalTime(i, process)
+            var { t, process } = totalTime(i, now_t, process)
             if(t > maxTime) {
                 maxTime = t
             }
         })
     }
-    return time + maxTime
+    return { t: time + maxTime, process } 
 }
 
-const endTime = (time, buffer) => {
-    const curr = Date.now();
-    // Later for precise timing
-    // mark the deadline of each tash
-    // this would require you to implement the same logic as totaltime
-    
-}
-
-module.exports = { totalTime, endTime };
+module.exports = { totalTime };
