@@ -74,8 +74,9 @@ router.get('/', isUser, async (req, res)=>{
 router.post('/task', isUser, async (req, res)=>{
     try {
 	const { project_id, task_id, user_id } = req.body;
-        console.log(req.body)
-	const a = await Project.findOneAndUpdate({ 
+        console.log(req.body, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	console.log(req.session)
+        const a = await Project.findOneAndUpdate({ 
             id: project_id, 
 	    process: { $elemMatch: {
                     'task_id': task_id,
@@ -85,11 +86,11 @@ router.post('/task', isUser, async (req, res)=>{
 		'process.$.status': req.body.status
 	    }});
 	
-        console.log(a, task_id)
-	res.status(200).json({ 'status':'success' });
+        console.log(a) 
+	res.status(201).json({ 'status':'success' });
     } catch(error) {
 	console.log(error);
-	res.status(200).json({'status':'failed', 'error':'internal error'});
+	res.status(500).json({'status':'failed', 'error':'internal error'});
     }
 });
 

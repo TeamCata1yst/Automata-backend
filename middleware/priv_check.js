@@ -2,18 +2,23 @@ const { User, Client, Admin } = require('../model/userSchema')
 const jwt = require('jsonwebtoken')
 
 
-const isAdmin = (req, res, next)=>{
+const isAdmin = async (req, res, next)=>{
     const token = req.header('Token');
     try {
         let verify = jwt.verify(token, process.env.SECRET)
         if(verify.admin) {
+            let a = await Admin.findOne({ email: verify.email });
+            if(!a)
+                return res.json({'status':'unauthorized', 'error':'token expired'})
+            else if(a.name != verify.name)
+                return res.json({'status':'unauthorized', 'error':'token expired'})
             req.session = verify;
             next();
         } else {
-            res.json({'status':'failed', 'error':'insufficient privileges'}); 
+            res.json({'status':'unauthorized', 'error':'insufficient privileges'}); 
         }
     } catch(error) {
-        res.json({'status':'failed', 'error':'insufficient privileges'});
+        res.json({'status':'unauthorized', 'error':'insufficient privileges'});
     }
 };
 
