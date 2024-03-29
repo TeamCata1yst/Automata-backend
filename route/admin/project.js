@@ -70,8 +70,8 @@ router.post('/template/create', isAdmin, async (req, res)=>{
     try {
 	const { name, process } = req.body;
 
-	const time = totalTime(0, process);
-	const template = new Template({ name, process, time });
+	const { t } = totalTime(0, 0, process);
+	const template = new Template({ name, process, time: t });
 	await template.save();
 	res.json({'status':'success'});
     } catch(error){
@@ -94,10 +94,10 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try {
-	const { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
+	var { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
 	
-	let total_time = totalTime(0, process) * buffer;
-	console.log(total_time)
+	var { t, process} = totalTime(0, new Date(), process);
+	let total_time = t * buffer;
 	let date = Date.now();
 	let no_of_hrs = 8.5;
 	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
@@ -147,12 +147,23 @@ router.post('/delete', isAdmin, async (req, res)=>{
     }
 });
 
+router.post('/update', isAdmin, async (req, res)=>{
+    try {
+	const { id, name, process } = req.body;
+	await Project.findOneAndUpdate({ id }, { name, process });
+	res.json({'status':'success'});
+    } catch(error) {
+	console.log(error);
+	res.status(500).json({'status':'failed', 'error':'internal error'});
+    }
+});
+
 router.post('/template/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, process } = req.body;
 	// checks
-        const time = totalTime(0, process);
-	await Template.findOneAndUpdate({ _id: id }, { name, process, time });
+        const { t } = totalTime(0, 0, process);
+	await Template.findOneAndUpdate({ _id: id }, { name, process, time: t  });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
