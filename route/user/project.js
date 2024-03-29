@@ -32,7 +32,8 @@ router.get('/', isUser, async (req, res)=>{
                 let t = task.deadline
                 t.setHours(9)
 
-                if(tasks[i].date == t) {
+                if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
+                    
                     tasks[i].tasks.push(task)
                     val = 1
                     break
