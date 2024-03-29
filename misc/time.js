@@ -53,12 +53,14 @@ const totalTime = (start, now_t, process) => {
             break
         }
     }
-    console.log(process)
+    
     var maxTime = 0 
     if(check) {
         process[alt].next.forEach(i => {
             console.log(process, i)
-            var { t, process } = totalTime(i, now_t, process)
+            var obj = totalTime(i, now_t, process)
+            process = obj.process
+            t = obj.t
             if(t > maxTime) {
                 maxTime = t
             }
