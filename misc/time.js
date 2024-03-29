@@ -1,10 +1,10 @@
 const totalTime = (start, now_t, process) => {
     var time = 0
     var alt = 0
+    var process = process
     let ptr = start
     var check = false
     while(true) {
-        console.log(process)
         ptr = process.findIndex( (obj) => {
             return obj.task_id == ptr
         })
@@ -53,10 +53,11 @@ const totalTime = (start, now_t, process) => {
             break
         }
     }
+    console.log(process)
     var maxTime = 0 
     if(check) {
         process[alt].next.forEach(i => {
-            console.log(i)
+            console.log(process, i)
             var { t, process } = totalTime(i, now_t, process)
             if(t > maxTime) {
                 maxTime = t
