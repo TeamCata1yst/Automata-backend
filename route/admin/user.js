@@ -7,9 +7,6 @@ const { isAdmin } = require('../../middleware/priv_check');
 router.get('/', isAdmin, async (_, res) => {
     try {
 	const users = await User.find({});
-	users.forEach( (user) => {
-	    delete user._doc.password;
-	});
 	return res.status(200).json({'status':'success', 'result': users});
     } catch(error) {
 	console.log(error);
