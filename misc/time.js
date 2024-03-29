@@ -4,6 +4,9 @@ const totalTime = (start, now_t, process) => {
     let ptr = start
     var check = false
     while(true) {
+        ptr = process.findIndex( obj => {
+            return obj.task_id == ptr
+        })
         if(process[ptr].time_req) {
             time += process[ptr].time_req
             if(now_t != 0) {
