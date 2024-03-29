@@ -22,11 +22,7 @@ router.get('/:dep_name', isAdmin, async (req, res)=>{
 	    return res.status(404).json({'status':'failed', 'error':'department does not exist'});
 	}
 	const result = await User.find({ department: dep_name });
-	if(result.length > 0) {
-	    result.forEach(x => {
-		delete x._doc.password;
-	    });
-	}
+	
 	res.json({ 'status':'success', 'result': result });
 	console.log(result);
     } catch(error){
