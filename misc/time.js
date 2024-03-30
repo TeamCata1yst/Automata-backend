@@ -8,17 +8,18 @@ const totalTime = (start, now_t, process) => {
         ptr = process.findIndex( (obj) => {
             return obj.task_id == ptr
         })
-        if(process[ptr].time_req) {
+        if(process[ptr].time_req && process[ptr].time_req != 0) {
             time += process[ptr].time_req
             if(now_t != 0) {
                 let now_d = now_t.getDay();
 
                 if(now_d == 0) {
                     now_t.setHours(9)
-                    now_t.setDate(now_t.getDate() + 1)
+                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                    
                 }
             
-                let a = new Date(now_t + process[ptr].time_req).getHours() 
+                let a = new Date(Date.parse(now_t) + process[ptr].time_req).getHours() 
             
                 if(a <= 19 && a >= 9) { 
                     let val = new Date(process[ptr].time_req)
@@ -29,18 +30,22 @@ const totalTime = (start, now_t, process) => {
                     var n = new Date()
                     n.setHours(17, 30)
                     n.setDate(now_t.getDate())
+                    n.setMonth(now_t.getMonth())
                     process[ptr].deadline = n
                 } else { 
                     now_t.setHours(9)
                     if(!(a < 9 && a >= 0))
-                        now_t.setDate(now_t.getDate() + 1) 
+                        now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
                         
                     var n = new Date()
                     n.setHours(17, 30)
                     n.setDate(now_t.getDate())
+                    n.setMonth(now_t.getMonth())
                     process[ptr].deadline = n
                 }
             }
+        } else {
+            process[ptr].time_req = 0
         }
         if(process[ptr].next && process[ptr].next.length > 1) {
             check = true

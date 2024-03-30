@@ -96,7 +96,7 @@ router.post('/create', isAdmin, async (req, res)=>{
     try {
 	var { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
 	
-	var { t, process} = totalTime(0, new Date(), process);
+	var { t, process} = totalTime(0, new Date(Date.now()), process);
 	let total_time = t * buffer;
 	let date = Date.now();
 	let no_of_hrs = 8.5;
@@ -149,8 +149,8 @@ router.post('/delete', isAdmin, async (req, res)=>{
 
 router.post('/update', isAdmin, async (req, res)=>{
     try {
-	const { id, name, process } = req.body;
-	await Project.findOneAndUpdate({ id }, { name, process });
+	const { id, name, resources, process } = req.body;
+	await Project.findOneAndUpdate({ id }, { name, resources, process });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
