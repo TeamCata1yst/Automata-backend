@@ -2,8 +2,6 @@ const router = require('express').Router();
 const { isUser } = require('../../middleware/priv_check'); 
 const { Project } = require('../../model/projectSchema');
 
-
-// LOGICAL ERRORRRRRRR
 router.get('/', isUser, async (req, res)=>{
     try {
         const { id } = req.session;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
@@ -25,9 +23,16 @@ router.get('/', isUser, async (req, res)=>{
 	});
         
         var tasks = [];
-        
+        let n = new Date()
+        n.setHours(9)
+        tasks.push({date: n, tasks:[]})
         arr.forEach((task, _) => {
             var val = 0
+            if(!task.deadline) {
+                task.deadline = new Date()
+                task.deadline.setHours(9)
+            }
+
             for(let i = 0; i < tasks.length; i++) {
                 let t = task.deadline
                 t.setHours(9)

@@ -15,8 +15,7 @@ const totalTime = (start, now_t, process) => {
 
                 if(now_d == 0) {
                     now_t.setHours(9)
-                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
-                    
+                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000) 
                 }
             
                 let a = new Date(Date.parse(now_t) + process[ptr].time_req).getHours() 
@@ -44,8 +43,6 @@ const totalTime = (start, now_t, process) => {
                     process[ptr].deadline = n
                 }
             }
-        } else {
-            process[ptr].time_req = 0
         }
         if(process[ptr].next && process[ptr].next.length > 1) {
             check = true
