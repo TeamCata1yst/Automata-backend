@@ -28,6 +28,7 @@ router.get('/', isUser, async (req, res)=>{
         tasks.push({date: n, tasks:[]})
         arr.forEach((task, _) => {
             var val = 0
+            console.log(task)
             if(!task.deadline) {
                 task.deadline = new Date()
                 let t = task.deadline
