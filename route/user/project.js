@@ -30,7 +30,10 @@ router.get('/', isUser, async (req, res)=>{
             var val = 0
             if(!task.deadline) {
                 task.deadline = new Date()
-                task.deadline.setHours(9)
+                let t = task.deadline
+                t.setHours(9)
+                tasks.push({ date: t, tasks:[ task ]})
+                return 
             }
 
             for(let i = 0; i < tasks.length; i++) {
