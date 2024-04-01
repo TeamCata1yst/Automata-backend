@@ -31,14 +31,14 @@ router.get('/', isUser, async (req, res)=>{
             console.log(task)
             if(!task.deadline) {
                 task.deadline = new Date()
-                let t = task.deadline
+                let t = new Date(task.deadline)
                 t.setHours(9)
                 tasks.push({ date: t, tasks:[ task ]})
                 return 
             }
 
             for(let i = 0; i < tasks.length; i++) {
-                let t = task.deadline
+                let t = new Date(task.deadline)
                 t.setHours(9)
 
                 if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
@@ -49,7 +49,7 @@ router.get('/', isUser, async (req, res)=>{
                 }
             }
             if(val == 0) {
-                let t = task.deadline
+                let t = new Date(task.deadline)
                 t.setHours(9)
                 tasks.push({ date: t, tasks:[ task ]})
             }
