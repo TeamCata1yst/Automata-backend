@@ -9,6 +9,9 @@ const projectSchema = new mongoose.Schema({
 	type: String,
 	required: true
     },
+    company: {
+        type: String
+    },
     client:{
 	type: String,
 	required: true
@@ -51,6 +54,9 @@ const templateSchema = new mongoose.Schema({
     name:{
 	type: String,
 	required: true
+    },
+    company: {
+        type: String
     },
     time:{
 	type: Number

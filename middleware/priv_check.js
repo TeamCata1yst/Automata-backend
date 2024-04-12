@@ -1,7 +1,6 @@
 const { User, Client, Admin } = require('../model/userSchema')
 const jwt = require('jsonwebtoken')
 
-
 const isAdmin = async (req, res, next)=>{
     const token = req.header('Token');
     try {

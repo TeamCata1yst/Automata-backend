@@ -5,6 +5,9 @@ const schema = new mongoose.Schema({
     id: {
         type: String
     },
+    company: {
+        type: String
+    },
     client_id: {
         type: String
     },

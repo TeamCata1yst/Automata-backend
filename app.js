@@ -12,7 +12,7 @@ mongoose.connect(process.env.DB_ADDR).then(()=>{
 });
 
 app.use(cors({
-    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000"]
+    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000", "https://b811-182-69-183-23.ngrok-free.app"]
 }));
 app.use(express.json());
 
@@ -32,6 +32,9 @@ app.use('/admin/client', require('./route/admin/client'));
 app.use('/admin/profile', require('./route/admin/profile'));
 app.use('/admin/project', require('./route/admin/project'));
 app.use('/admin/department', require('./route/admin/department'))
+
+// Org APIs
+app.use('/org/', require('./route/org/app'))
 
 app.listen(process.env.PORT, ()=>{
   console.log("Server Started at port:", process.env.PORT);

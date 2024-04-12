@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const { Project, Template } = require('../../model/projectSchema');
 const { Client } = require('../../model/userSchema');
+const { Company } = require('../../model/companySchema')
 const { isAdmin } = require('../../middleware/priv_check');
 const { totalTime } = require('../../misc/time');
 
-router.get('/', isAdmin, async (_, res)=>{
+router.get('/', isAdmin, async (req, res)=>{
     try {
-	const projects = await Project.find({});
+	const projects = await Project.find({ company: req.session.company });
 	res.json(projects);
     } catch(error) { 
 	console.log(error);
@@ -17,7 +18,7 @@ router.get('/', isAdmin, async (_, res)=>{
 router.get('/id/:id', isAdmin, async (req, res)=>{
     try {
         const { id } = req.params;
-	const result = await Project.findOne({ id });
+	const result = await Project.findOne({ id, company: req.session.company });
         if(result) {
             return res.json({"status":"success", result});
         }
@@ -31,7 +32,7 @@ router.get('/id/:id', isAdmin, async (req, res)=>{
 router.get('/templates/:id', isAdmin, async (req, res)=>{
     try {
         const { id } = req.params;
-	const result = await Template.findOne({ _id: id });
+	const result = await Template.findOne({ _id: id, company: req.session.company });
         if(result) {
             return res.json({"status":"success", result});
         }
@@ -42,9 +43,9 @@ router.get('/templates/:id', isAdmin, async (req, res)=>{
     } 
 });
 
-router.get('/templates', isAdmin, async (_, res)=>{
+router.get('/templates', isAdmin, async (req, res)=>{
     try {
-	const templates = await Template.find({});
+	const templates = await Template.find({ company: req.session.company });
 	res.json(templates);
     } catch(error) {
 	console.log(error);
@@ -55,9 +56,9 @@ router.get('/templates', isAdmin, async (_, res)=>{
 router.post('/template/copy', isAdmin, async (req, res) => {
     try {
         const { id } = req.body;
-        const val = await Template.findOne({ _id: id })
+        const val = await Template.findOne({ _id: id, company: req.session.company })
         if(val) {
-            const template = new Template({ name: val.name + " (copy)", process: val.process, time: val.time})
+            const template = new Template({ name: val.name + " (copy)", process: val.process, time: val.time, company: req.session.company })
             await template.save()
         }
         res.json({'status':'success'})
@@ -70,8 +71,8 @@ router.post('/template/create', isAdmin, async (req, res)=>{
     try {
 	const { name, process } = req.body;
 
-	const { t } = totalTime(0, 0, process);
-	const template = new Template({ name, process, time: t });
+	const { t } = totalTime(0, 0, 0, 0, process);
+	const template = new Template({ name, process, time: t, company: req.session.company });
 	await template.save();
 	res.json({'status':'success'});
     } catch(error){
@@ -84,7 +85,7 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
     try {
 	const { id } = req.body;
 
-	await Template.findOneAndDelete({ _id: id });
+	await Template.findOneAndDelete({ _id: id, company: req.session.company });
 	res.json({'status':'success'});
     } catch(error){
 	console.log(error);
@@ -95,14 +96,20 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 router.post('/create', isAdmin, async (req, res)=>{
     try {
 	var { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
-	
-	var { t, process} = totalTime(0, new Date(Date.now()), process);
+        var comp = await Company.findOne({ comp_name: req.session.company})
+
+        var h = [Math.ceil(comp.hours), (comp.hours*10)%10]
+        var init_time = comp.start_time.split(':').map( x => {
+            return parseInt(x)
+        })
+
+	var { t, process} = totalTime(0, new Date(Date.now()), init_time, h, process);
 	let total_time = t * buffer;
 	let date = Date.now();
-	let no_of_hrs = 8.5;
+	let no_of_hrs = comp.hours;
 	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
 	
-	let no_of_wd = [0];
+	let no_of_wd = comp.weekend;
         
 	for(let i=0; i < no_of_days; i++) {
 	    date += 24*60*60*1000;
@@ -115,17 +122,17 @@ router.post('/create', isAdmin, async (req, res)=>{
             process[index].status = 0
         })
         
-        var val = await Client.findOne({ $or: [{ email }, { mobile_no }] })
+        var val = await Client.findOne({ company: req.session.company, $or: [{ email }, { mobile_no }] })
         if(val) {
-            await Project.updateMany({ client: val.name }, { client} )
-            await Client.findOneAndUpdate({ email, mobile_no, name: client }) 
+            await Project.updateMany({ client: val.name, company: req.session.company }, { client } )
+            await Client.findOneAndUpdate({ company: req.session.company, $or: [{ email }, { mobile_no }] }, { email, mobile_no, name: client })
         } else {
-            val = new Client({ email, mobile_no, name: client })
+            val = new Client({ email, mobile_no, name: client, company: req.session.company })
             await val.save()
         }
         
         const priority = await Project.countDocuments();
-	const project = new Project({name, client, client_id: val.id, buffer, template, process, priority, deadline: date, resources});
+	const project = new Project({name, client, client_id: val.id, buffer, template, process, priority, deadline: date, resources, company: req.session.company });
 	await project.save();
 
         res.json({'status':'success'});
@@ -138,8 +145,8 @@ router.post('/create', isAdmin, async (req, res)=>{
 router.post('/delete', isAdmin, async (req, res)=>{
     try {
         const { id } = req.body;
-        const val = await Project.findOneAndDelete({ id });
-        await Project.updateMany({ priority:{ $gt: val.priority} }, { $inc: { priority: -1}});
+        const val = await Project.findOneAndDelete({ id, company: req.session.company });
+        await Project.updateMany({ company: req.session.company, priority:{ $gt: val.priority} }, { $inc: { priority: -1}});
         res.json({'status':'success'});
     } catch(error) {
         res.status(500).json({"status":"failed", "error":"internal error"});
@@ -150,7 +157,7 @@ router.post('/delete', isAdmin, async (req, res)=>{
 router.post('/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, resources, process } = req.body;
-	await Project.findOneAndUpdate({ id }, { name, resources, process });
+	await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
@@ -162,8 +169,8 @@ router.post('/template/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, process } = req.body;
 	// checks
-        const { t } = totalTime(0, 0, process);
-	await Template.findOneAndUpdate({ _id: id }, { name, process, time: t  });
+        const { t } = totalTime(0, 0, 0, 0, process);
+	await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, time: t  });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
@@ -176,11 +183,11 @@ router.post('/priority', isAdmin, async (req, res) => {
         const { id, priority, inc} = req.body;
     
         if(inc) {
-            await Project.findOneAndUpdate({ priority: priority+1}, { priority });
-            await Project.findOneAndUpdate({ id }, { priority: priority+1});
+            await Project.findOneAndUpdate({ priority: priority+1, company: req.session.company}, { priority });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1});
         } else {
-            await Project.findOneAndUpdate({ priority: priority-1}, {priority: priority});
-            await Project.findOneAndUpdate({ id }, { priority: priority-1})
+            await Project.findOneAndUpdate({ priority: priority-1, company: req.session.company}, {priority: priority});
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1})
         }
         res.json({'status':'success'});
     } catch(error) {
@@ -190,4 +197,3 @@ router.post('/priority', isAdmin, async (req, res) => {
 });
 
 module.exports = router;
-

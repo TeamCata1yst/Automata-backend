@@ -4,9 +4,9 @@ const { Project } = require('../../model/projectSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 
 
-router.get('/', isAdmin, async (_, res) => {
+router.get('/', isAdmin, async (req, res) => {
     try {
-	const users = await User.find({});
+	const users = await User.find({ company: req.session.company });
 	return res.status(200).json({'status':'success', 'result': users});
     } catch(error) {
 	console.log(error);
@@ -17,11 +17,11 @@ router.get('/', isAdmin, async (_, res) => {
 router.get('/:dep_name', isAdmin, async (req, res)=>{
     try{
 	const { dep_name } = req.params;
-	const depExist = await Department.findOne({company: 'company', department: { $elemMatch:{ name: dep_name } }});
+	const depExist = await Department.findOne({company: req.session.company, department: { $elemMatch:{ name: dep_name } }});
 	if(!depExist) {
 	    return res.status(404).json({'status':'failed', 'error':'department does not exist'});
 	}
-	const result = await User.find({ department: dep_name });
+	const result = await User.find({ department: dep_name, company: req.session.company });
 	
 	res.json({ 'status':'success', 'result': result });
 	console.log(result);
@@ -46,10 +46,10 @@ router.post('/create', isAdmin, async (req, res)=>{
 	    password += characters.charAt(Math.floor(Math.random() * length));
 	}
 	console.log(req.body)
-        const user = new User({ name, department, gender, email, mobile_no, password });
+        const user = new User({ name, department, gender, email, mobile_no, password, company: req.session.company });
         const result = await user.save();
 	console.log(result)
-	await Department.findOneAndUpdate({company: 'company', department: {$elemMatch:{ name: department } }}, { $push:{ 'department.$.users': result.id }});
+	await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: department } }}, { $push:{ 'department.$.users': result.id }});
         res.json({'status':'success'});
     } catch(error){
         console.log(error);
@@ -65,9 +65,9 @@ router.post('/delete', isAdmin, async (req, res)=>{
             console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         } 
-	const val = await User.findOneAndDelete({ id });
+	const val = await User.findOneAndDelete({ id, company: req.session.company });
 	if(val){
-	    await Department.findOneAndUpdate({company: 'company', department: {$elemMatch:{ name: val.department } }}, { $pull:{ 'department.$.users': val.id }});
+	    await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: val.department } }}, { $pull:{ 'department.$.users': val.id }});
 	}
 	res.json({'status':'success'});
     } catch(error){
@@ -80,7 +80,7 @@ router.post('/tasks', isAdmin, async (req, res) => {
     try {
         const { id } = req.body;
         
-        const projects = await Project.find({ resources: id });
+        const projects = await Project.find({ resources: id, company: req.session.company });
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
         const arr = [];

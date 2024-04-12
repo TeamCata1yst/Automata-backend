@@ -6,14 +6,14 @@ const { isUser } = require('../../middleware/priv_check')
 router.get('/', isUser, async (req, res) => {
     try {
         const { id } = req.session;
-        const val = await Project.find({ resources: id})
+        const val = await Project.find({ resources: id, company: req.session.company })
         var arr = []
         console.log(val)
         val.forEach((ele, i)=>{
             arr.push(ele.id)
         })
         console.log(arr)
-        const queries = await Query.find({ project_id: { "$in": arr }})
+        const queries = await Query.find({ company: req.session.company, project_id: { "$in": arr }})
         res.json({'status':'success', 'result': queries})
     } catch(error) {
         console.log(error)
@@ -24,7 +24,7 @@ router.get('/', isUser, async (req, res) => {
 router.get('/:id', isUser, async (req, res)=> {
     try {
         const { id } = req.params;
-        const val = await Query.findOne({ id })
+        const val = await Query.findOne({ id, company: req.session.company })
         if(val) {
             const project = await Project.findOne({id: val.project_id})
             return res.json({'status':'success', 'result': { ...val['_doc'], project_name: project.name }})
@@ -39,7 +39,7 @@ router.get('/:id', isUser, async (req, res)=> {
 router.post('/resolve', isUser, async (req, res) => {
     try {
         const { query_id, remark } = req.body;
-        await Query.findOneAndUpdate({id: query_id }, { status: true, remark})
+        await Query.findOneAndUpdate({id: query_id, company: req.session.company }, { status: true, remark})
         res.json({'status':'success'})
     } catch(error) {
         console.log(error)

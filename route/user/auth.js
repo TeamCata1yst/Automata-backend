@@ -6,8 +6,8 @@ const { User } = require("../../model/userSchema");
 router.post('/login', (req, res) => {
     try{
         console.log(req.body)
-        const { mobile_no, password } = req.body;
-            User.findOne({ mobile_no })
+        const { mobile_no, password, company } = req.body;
+            User.findOne({ mobile_no, company })
                 .exec()
                 .then(user => {
                     if (!user){
@@ -15,7 +15,7 @@ router.post('/login', (req, res) => {
                     }
                     console.log(user.password)
                     if(password == user.password) {
-                        var data = { user: true, id: user.id, name: user.name, department: user.department, gender: user.gender, email: user.email, mobile_no: user.mobile_no };
+                        var data = { user: true, id: user.id, name: user.name, company: user.company, department: user.department, gender: user.gender, email: user.email, mobile_no: user.mobile_no };
                         var token = jwt.sign(data, process.env.SECRET)
                         return res.status(200).json({ 'status':'success', 'Token': token });
                     } else {

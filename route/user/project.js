@@ -5,7 +5,7 @@ const { Project } = require('../../model/projectSchema');
 router.get('/', isUser, async (req, res)=>{
     try {
         const { id } = req.session;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
-	const projects = await Project.find({ resources: id });
+	const projects = await Project.find({ resources: id, company: req.session.company });
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
         const arr = [];
@@ -66,7 +66,8 @@ router.post('/task', isUser, async (req, res)=>{
     try {
 	const { project_id, task_id } = req.body;
         await Project.findOneAndUpdate({ 
-            id: project_id, 
+            id: project_id,
+            company: req.session.company,
 	    process: { $elemMatch: {
                     'task_id': task_id,
                     'selected_resource': req.session.id

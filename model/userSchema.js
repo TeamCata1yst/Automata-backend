@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    company: {
+        type: String
+    },
     gender:{
 	type: Boolean,  //0 == male, 1 == female
 	required: true
@@ -59,6 +62,9 @@ userSchema.pre("save", async function(next){
 // Client
 const clientSchema = new mongoose.Schema({
     id:{
+        type: String
+    },
+    company: {
         type: String
     },
     name:{
@@ -98,6 +104,10 @@ const adminSchema = new mongoose.Schema({
     name:{
         type: String,
         required: true
+    },
+    company:{
+        type: String,
+        default: ""
     },
     email:{
         type: String,
