@@ -15,7 +15,7 @@ router.post('/login', (req, res) => {
                         return res.status(401).json({ 'status':'failed', 'error':'invalid credentials' });
                     }
                     if (user.password == password) {
-                        var data = { client: true, id: user.id, email: user.email, mobile_no: user.mobile_no, name: user.name };
+                        var data = { client: true, id: user.id, email: user.email, mobile_no: user.mobile_no, name: user.name, company: user.company };
                         var token = jwt.sign(data, process.env.SECRET);
                         return res.status(200).json({ 'status':'success', 'Token': token });
                     }

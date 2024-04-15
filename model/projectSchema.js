@@ -61,6 +61,7 @@ const templateSchema = new mongoose.Schema({
     time:{
 	type: Number
     },
+    milestones: [],
     process:[]
 });
 

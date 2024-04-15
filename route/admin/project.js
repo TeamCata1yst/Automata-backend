@@ -58,7 +58,7 @@ router.post('/template/copy', isAdmin, async (req, res) => {
         const { id } = req.body;
         const val = await Template.findOne({ _id: id, company: req.session.company })
         if(val) {
-            const template = new Template({ name: val.name + " (copy)", process: val.process, time: val.time, company: req.session.company })
+            const template = new Template({ name: val.name + " (copy)", process: val.process, time: val.time, milestones: val.milestones, company: req.session.company })
             await template.save()
         }
         res.json({'status':'success'})
@@ -69,10 +69,10 @@ router.post('/template/copy', isAdmin, async (req, res) => {
 })
 router.post('/template/create', isAdmin, async (req, res)=>{
     try {
-	const { name, process } = req.body;
-
+	const { name, process, milestones } = req.body;
+        console.log(req.body)
 	const { t } = totalTime(0, 0, 0, 0, process);
-	const template = new Template({ name, process, time: t, company: req.session.company });
+	const template = new Template({ name, process, time: t, milestones, company: req.session.company });
 	await template.save();
 	res.json({'status':'success'});
     } catch(error){
@@ -95,6 +95,7 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try {
+        console.log(req.body)
 	var { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
         var comp = await Company.findOne({ comp_name: req.session.company})
 
@@ -167,10 +168,10 @@ router.post('/update', isAdmin, async (req, res)=>{
 
 router.post('/template/update', isAdmin, async (req, res)=>{
     try {
-	const { id, name, process } = req.body;
+	const { id, name, process, milestones } = req.body;
 	// checks
         const { t } = totalTime(0, 0, 0, 0, process);
-	await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, time: t  });
+	await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
 	res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
