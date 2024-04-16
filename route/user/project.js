@@ -1,11 +1,15 @@
 const router = require('express').Router();
 const { isUser } = require('../../middleware/priv_check'); 
 const { Project } = require('../../model/projectSchema');
+const { Company } = require('../../model/companySchema');
 
 router.get('/', isUser, async (req, res)=>{
     try {
         const { id } = req.session;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
 	const projects = await Project.find({ resources: id, company: req.session.company });
+        const com = await Company.findOne({ comp_name: req.session.company })
+        
+        var c = com.start_time.split(':')
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
         const arr = [];
@@ -24,7 +28,9 @@ router.get('/', isUser, async (req, res)=>{
         
         var tasks = [];
         let n = new Date()
-        n.setHours(9)
+        
+        n.setHours(parseInt(c[0]), parseInt(c[1]))
+
         tasks.push({date: n, tasks:[]})
         arr.forEach((task, _) => {
             var val = 0
@@ -32,14 +38,14 @@ router.get('/', isUser, async (req, res)=>{
             if(!task.deadline) {
                 task.deadline = new Date()
                 let t = new Date(task.deadline)
-                t.setHours(9)
+                t.setHours(parseInt(c[0]), parseInt(c[1]))
                 tasks.push({ date: t, tasks:[ task ]})
                 return 
             }
 
             for(let i = 0; i < tasks.length; i++) {
                 let t = new Date(task.deadline)
-                t.setHours(9)
+                t.setHours(parseInt(c[0]), parseInt(c[1]))
 
                 if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
                     
@@ -50,7 +56,7 @@ router.get('/', isUser, async (req, res)=>{
             }
             if(val == 0) {
                 let t = new Date(task.deadline)
-                t.setHours(9)
+                t.setHours(parseInt(c[0]), parseInt(c[1]))
                 tasks.push({ date: t, tasks:[ task ]})
             }
         });
@@ -64,7 +70,7 @@ router.get('/', isUser, async (req, res)=>{
 
 router.post('/task', isUser, async (req, res)=>{
     try {
-	const { project_id, task_id } = req.body;
+	const { project_id, task_id, status, remark } = req.body;
         await Project.findOneAndUpdate({ 
             id: project_id,
             company: req.session.company,
@@ -73,7 +79,8 @@ router.post('/task', isUser, async (req, res)=>{
                     'selected_resource': req.session.id
                 }
             }}, { '$set': {
-		'process.$.status': req.body.status
+		'process.$.status': status,
+                'process.$.remark': remark
 	    }});
 	
 	res.status(201).json({ 'status':'success' });
