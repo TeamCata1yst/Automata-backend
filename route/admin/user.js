@@ -57,6 +57,17 @@ router.post('/create', isAdmin, async (req, res)=>{
     }
 });
 
+router.post('/edit', isAdmin, async (req, res) => {
+    try {
+        const { id, name, gender, email, mobile_no, password } = req.body
+        await User.findOneAndUpdate({ id, company: req.session.company}, { name, gender, email, mobile_no, password })
+        res.json({'status':'success'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({ 'status':'failed', 'error':'internal error' })
+    }
+})
+
 router.post('/delete', isAdmin, async (req, res)=>{
     try{
         const { id } = req.body;
