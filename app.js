@@ -12,7 +12,7 @@ mongoose.connect(process.env.DB_ADDR).then(()=>{
 });
 
 app.use(cors({
-    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000", "https://48bd-182-69-183-23.ngrok-free.app"]
+    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000"]
 }));
 app.use(express.json());
 

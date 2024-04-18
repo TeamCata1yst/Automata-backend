@@ -1,9 +1,10 @@
-const totalTime = (start, now_t, init_time, hours, process) => {
+const totalTime = (start, now_t, init_time, hours, leaves, process) => {
     var time = 0
     var alt = 0
     var process = process
     let ptr = start
     var check = false
+
     while(true) {
         ptr = process.findIndex( (obj) => {
             return obj.task_id == ptr
@@ -11,38 +12,55 @@ const totalTime = (start, now_t, init_time, hours, process) => {
         if(process[ptr].time_req && process[ptr].time_req != 0) {
             time += process[ptr].time_req
             if(now_t != 0) {
-                let now_d = now_t.getDay();
-
-                if(now_d == 0) {
-                    now_t.setHours(init_time[0], init_time[1])
-                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000) 
+                while(leaves.includes(now_t.getDay())) {
+                    
+                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
                 }
-            
-                let v = new Date(Date.parse(now_t) + process[ptr].time_req)
-                let a = v.getHours()
-                let b = v.getMinutes()
-                if( (a + b/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) && (a + b/60 >= init_time[0] + init_time[1]/60) ) { 
-                    let val = new Date(process[ptr].time_req)
-                    
-                    now_t.setHours(now_t.getHours() + val.getHours())
-                    now_t.setMinutes(now_t.getMinutes() + val.getMinutes())
-                    
-                    var n = new Date()
-                    n.setHours(init_time[0] + hours[0], init_time[1] + hours[1]*60)
-                    n.setDate(now_t.getDate())
-                    n.setMonth(now_t.getMonth())
-                    process[ptr].deadline = n
-                } else { 
-                    now_t.setHours(init_time[0], init_time[1])
-                    if(!( a + b/60 < init_time[0] + init_time[1]/60 && a + b/60 >= 0))
+                if( !( ( now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 ) && ( now_t.getHours() + now_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10) ) )) {
+                    if( !( now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + hours[0] + init_time[1]/60 + hours[1]/10 )) {
+                        now_t.setHours(init_time[0], init_time[1])
+                        
+                    } else {
+                        now_t.setHours(init_time[0], init_time[1])
                         now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
                         
-                    var n = new Date()
-                    n.setHours(init_time[0] + hours[0], init_time[1] + hours[1]*60)
-                    n.setDate(now_t.getDate())
-                    n.setMonth(now_t.getMonth())
-                    process[ptr].deadline = n
+                    }
                 }
+                
+                var after_t = new Date(Date.parse(now_t) + process[ptr].time_req)
+                process[ptr].init_time = new Date(Date.parse(now_t))
+
+                
+                if((after_t.getHours() + after_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10) ) && after_t.getDay() == now_t.getDay() && after_t.getDate() == now_t.getDate()) {
+                    
+                    process[ptr].deadline = new Date(Date.parse(after_t))
+                    now_t = after_t
+                } else {
+                    var out_t = new Date(Date.parse(now_t))
+                    out_t.setHours(init_time[0] + hours[0], init_time[1] + (hours[1]/10)*60)
+
+                    
+                    var left_over = (process[ptr].time_req - (Date.parse(out_t) - Date.parse(now_t)))/(1000*60*60)
+                    if(left_over < 0)
+                        left_over = 0
+                    
+                    while(left_over > (hours[0] + hours[1]/10)) {
+                        
+                        if(leaves.includes(now_t.getDay())) {
+                            now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                            continue
+                        }
+                        now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                        left_over -= (hours[0] + hours[1]/10)
+                        
+                    }
+                    now_t.setHours(init_time[0], init_time[1])
+                    
+                    
+                    now_t = new Date(Date.parse(now_t) + (left_over*60*60*1000) + 24*60*60*1000)
+                    process[ptr].deadline = new Date(Date.parse(now_t))
+                }
+                
             }
         }
         if(process[ptr].next && process[ptr].next.length > 1) {
@@ -60,8 +78,8 @@ const totalTime = (start, now_t, init_time, hours, process) => {
     var maxTime = 0 
     if(check) {
         process[alt].next.forEach(i => {
-            console.log(process, i)
-            var obj = totalTime(i, now_t, init_time, hours, process)
+            
+            var obj = totalTime(i, now_t, init_time, hours, leaves, process)
             process = obj.process
             t = obj.t
             if(t > maxTime) {
