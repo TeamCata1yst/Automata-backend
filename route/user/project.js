@@ -28,7 +28,7 @@ router.get('/', isUser, async (req, res)=>{
          
         //
         const comp = await Company.findOne({comp_name: req.session.company})
-        var now_t = arr[0].date
+        var now_t = new Date(arr[0].date)
 
         var init_time = comp.start_time.split(':').map( x => {
             return parseInt(x)
@@ -102,7 +102,7 @@ router.get('/', isUser, async (req, res)=>{
         tasks.push({date: n, tasks:[]})
         arr.forEach((task, _) => {
             var val = 0
-            console.log(task)
+            
             if(!task.deadline) {
                 task.deadline = new Date()
                 let t = new Date(task.deadline)

@@ -37,6 +37,10 @@ const projectSchema = new mongoose.Schema({
 	type: Date,
 	required: true
     },
+    no_buffer_deadline:{
+	type: Date,
+	required: true
+    },
     priority:{
 	type: Number
     },
