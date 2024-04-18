@@ -25,7 +25,75 @@ router.get('/', isUser, async (req, res)=>{
                 }
             });
 	});
-        
+         
+        //
+        const comp = await Company.findOne({comp_name: req.session.company})
+        var now_t = arr[0].date
+
+        var init_time = comp.start_time.split(':').map( x => {
+            return parseInt(x)
+        })
+
+        var hours = [Math.ceil(comp.hours), (comp.hours*10)%10]
+        var leaves = comp.weekend
+
+        arr.forEach( elem => {
+        if(elem.time_req && elem.time_req != 0) {
+            if(now_t != 0) {
+                while(leaves.includes(now_t.getDay())) {
+                    
+                    now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                }
+                if( !( ( now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 ) && ( now_t.getHours() + now_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10) ) )) {
+                    if( !( now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + hours[0] + init_time[1]/60 + hours[1]/10 )) {
+                        now_t.setHours(init_time[0], init_time[1])
+                        
+                    } else {
+                        now_t.setHours(init_time[0], init_time[1])
+                        now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                        
+                    }
+                }
+                
+                var after_t = new Date(Date.parse(now_t) + elem.time_req)
+                elem.init_time = new Date(Date.parse(now_t))
+
+                
+                if((after_t.getHours() + after_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10) ) && after_t.getDay() == now_t.getDay() && after_t.getDate() == now_t.getDate()) {
+                    
+                    elem.deadline = new Date(Date.parse(after_t))
+                    now_t = after_t
+                } else {
+                    var out_t = new Date(Date.parse(now_t))
+                    out_t.setHours(init_time[0] + hours[0], init_time[1] + (hours[1]/10)*60)
+
+                    
+                    var left_over = (elem.time_req - (Date.parse(out_t) - Date.parse(now_t)))/(1000*60*60)
+                    if(left_over < 0)
+                        left_over = 0
+                    
+                    while(left_over > (hours[0] + hours[1]/10)) {
+                        
+                        if(leaves.includes(now_t.getDay())) {
+                            now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                            continue
+                        }
+                        now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
+                        left_over -= (hours[0] + hours[1]/10)
+                        
+                    }
+                    now_t.setHours(init_time[0], init_time[1])
+                    
+                    
+                    now_t = new Date(Date.parse(now_t) + (left_over*60*60*1000) + 24*60*60*1000)
+                    elem.deadline = new Date(Date.parse(now_t))
+                }
+                
+            }
+        }
+
+        });
+        //
         var tasks = [];
         let n = new Date()
         
