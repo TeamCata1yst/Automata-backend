@@ -38,8 +38,8 @@ const totalTime = (start, now_t, init_time, hours, process) => {
                     if(!( a + b/60 < init_time[0] + init_time[1]/60 && a + b/60 >= 0))
                         now_t = new Date(Date.parse(now_t) + 24*60*60*1000)
                     //left hour logic with while
-                    var left_over = process[ptr].time_req/(24*60*60*1000)
-                    while(left)
+                    //var left_over = process[ptr].time_req/(24*60*60*1000)
+                    //while(left)
                     
                     var n = new Date()
                     n.setHours(init_time[0] + hours[0], init_time[1] + hours[1]*60)

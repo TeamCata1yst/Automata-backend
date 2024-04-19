@@ -8,6 +8,7 @@ router.get('/projects', isClient, async (req, res) =>{
         const { id, company } = req.session;
         var n = []
         const project = await Project.find({ client_id: id, company });
+        console.log(id, company)
         project.forEach( (e, i) => {
             var mil = {}
             e.process.filter( x => x.milestone ).forEach( elem => {
