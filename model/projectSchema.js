@@ -20,6 +20,12 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    city:{
+        type: String
+    },
+    remaining_time: {
+        type: Number
+    },
     resources:[],
     status:{
 	type: Boolean,

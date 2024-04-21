@@ -71,7 +71,7 @@ router.post('/template/create', isAdmin, async (req, res)=>{
     try {
 	const { name, process, milestones } = req.body;
         console.log(req.body)
-	const { t } = totalTime(0, 0, 0, 0, process);
+	const { t } = totalTime(0, 0, 0, 0, [], process);
 	const template = new Template({ name, process, time: t, milestones, company: req.session.company });
 	await template.save();
 	res.json({'status':'success'});
@@ -96,7 +96,7 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 router.post('/create', isAdmin, async (req, res)=>{
     try {
         console.log(req.body)
-	var { name, client, email, mobile_no, buffer, template, process, resources, } = req.body;
+	var { name, client, email, mobile_no, buffer, template, process, resources, city } = req.body;
         var comp = await Company.findOne({ comp_name: req.session.company})
 
         var h = [Math.ceil(comp.hours), (comp.hours*10)%10]
@@ -104,7 +104,12 @@ router.post('/create', isAdmin, async (req, res)=>{
             return parseInt(x)
         })
 
-	var { t, process} = totalTime(0, new Date(Date.now()), init_time, h, process);
+        process.forEach((_, index) => {
+            process[index].remark = ""
+            process[index].status = 0
+        })
+
+	var { t, process} = totalTime(0, new Date(), init_time, h, comp.weekend, process);
 	let total_time = t * buffer;
 	let date = Date.now();
 	let no_of_hrs = comp.hours;
@@ -117,11 +122,7 @@ router.post('/create', isAdmin, async (req, res)=>{
             if(no_of_wd.includes(new Date(date).getDay())) {
                 date += 24*60*60*1000;
             }
-	}
-        process.forEach((_, index) => {
-            process[index].remark = ""
-            process[index].status = 0
-        })
+	} 
         
         var val = await Client.findOne({ company: req.session.company, $or: [{ email }, { mobile_no }] })
         if(val) {
@@ -133,9 +134,9 @@ router.post('/create', isAdmin, async (req, res)=>{
         }
         
         const priority = await Project.countDocuments();
-	const project = new Project({name, client, client_id: val.id, buffer, template, process, priority, deadline: date, resources, company: req.session.company });
+	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company });
 	await project.save();
-
+        
         res.json({'status':'success'});
     } catch(error){
 	console.log(error);
@@ -170,7 +171,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, process, milestones } = req.body;
 	// checks
-        const { t } = totalTime(0, 0, 0, 0, process);
+        const { t } = totalTime(0, 0, 0, 0, [], process);
 	await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
 	res.json({'status':'success'});
     } catch(error) {

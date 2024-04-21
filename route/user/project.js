@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { isUser } = require('../../middleware/priv_check'); 
 const { Project } = require('../../model/projectSchema');
 const { Company } = require('../../model/companySchema');
+const { totalTime } = require('../../misc/time')
 
 router.get('/', isUser, async (req, res)=>{
     try {
@@ -34,17 +35,9 @@ router.get('/', isUser, async (req, res)=>{
         tasks.push({date: n, tasks:[]})
         arr.forEach((task, _) => {
             var val = 0
-            console.log(task)
-            if(!task.deadline) {
-                task.deadline = new Date()
-                let t = new Date(task.deadline)
-                t.setHours(parseInt(c[0]), parseInt(c[1]))
-                tasks.push({ date: t, tasks:[ task ]})
-                return 
-            }
 
             for(let i = 0; i < tasks.length; i++) {
-                let t = new Date(task.deadline)
+                let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
 
                 if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
@@ -55,7 +48,7 @@ router.get('/', isUser, async (req, res)=>{
                 }
             }
             if(val == 0) {
-                let t = new Date(task.deadline)
+                let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
                 tasks.push({ date: t, tasks:[ task ]})
             }
@@ -71,7 +64,7 @@ router.get('/', isUser, async (req, res)=>{
 router.post('/task', isUser, async (req, res)=>{
     try {
 	const { project_id, task_id, status, remark } = req.body;
-        await Project.findOneAndUpdate({ 
+        const a = await Project.findOneAndUpdate({ 
             id: project_id,
             company: req.session.company,
 	    process: { $elemMatch: {
@@ -81,8 +74,13 @@ router.post('/task', isUser, async (req, res)=>{
             }}, { '$set': {
 		'process.$.status': status,
                 'process.$.remark': remark
-	    }});
-	
+	    }}, {
+                'new': true
+            });
+     
+	const { t } = totalTime(0, 0, 0, 0, [], a.process)
+        
+        await Project.findOneAndUpdate({ id: project_id, company: req.session.company }, { remaining_time: t })
 	res.status(201).json({ 'status':'success' });
     } catch(error) {
 	console.log(error);
