@@ -27,6 +27,75 @@ router.get('/', isUser, async (req, res)=>{
             });
 	});
         
+        const now_t = arr[0].init_time
+        
+        var hours = [Math.ceil(com.hours), (com.hours*10)%10]
+        var init_time = c.map( x => {
+            return parseInt(x)
+        })        
+        var weekend = com.weekend
+        arr.forEach( element => {
+            
+                while(weekend.includes(now_t.getDay())) {
+                    now_t.setHours(init_time[0], init_time[1])    
+                    now_t.setDate(now_t.getDate() + 1)
+                }
+                console.log(now_t.getHours(), now_t.getDate())
+                if(now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 && now_t.getHours() + now_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) {
+                    element.init_time = new Date(Date.parse(now_t))
+                    var after_t = new Date(Date.parse(now_t) + element.time_req)
+                    if((after_t.getHours() + after_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 && after_t.getHours() + after_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) && now_t.getDate() == after_t.getDate() && now_t.getFullYear() == after_t.getFullYear() && now_t.getMonth() == after_t.getMonth()) {
+                        let val = element.time_req/(1000*60*60)
+                        now_t.setHours(now_t.getHours() + Math.floor(val), now_t.getMinutes() + ((val*10)%10)*60) 
+                        element.deadline = new Date(Date.parse(now_t))
+                    } else {
+                        let dis = ((init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) - (now_t.getHours() + now_t.getMinutes()/60)
+                        var left_over = element.time_req/(1000*60*60) - dis
+                        now_t.setHours(init_time[0], init_time[1])
+                        now_t.setDate(now_t.getDate() + 1)
+                        
+                        while(weekend.includes(now_t.getDay())) {
+                            now_t.setDate(now_t.getDate() + 1) 
+                        }
+
+                        while(left_over > hours[0] + hours[1]) {
+                            console.log("i")
+                            if(weekend.includes(now_t.getDay())) {
+                                now_t.setDate(now_t.getDate() + 1) 
+                            } else {
+                                left_over -= (hours[0] + hours[1])
+                                now_t.setDate(now_t.getDate() + 1)
+                            }
+                        }
+                        now_t.setHours(now_t.getHours() + Math.floor(left_over), now_t.getMinutes() + ((left_over*10)%10)*60)
+                        element.deadline = new Date(Date.parse(now_t))
+                    }
+                } else {
+                    if(now_t.getHours() + now_t.getMinutes()/60 > (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) {
+                        now_t.setDate(now_t.getDate() + 1)
+                    }
+                    now_t.setHours(init_time[0], init_time[1])
+                    while(weekend.includes(now_t)) {
+                        now_t.setDate(now_t.getDate() + 1)
+                    }
+                    element.init_time = new Date(Date.parse(now_t))
+                    var left_over = element.time_req/(1000*60*60)
+                    while(left_over > hours[0] + hours[1]) {
+                        if(weekend.includes(now_t.getDay())) {
+                            now_t.setDate(now_t.getDate() + 1) 
+                        } else {
+                            left_over -= (hours[0] + hours[1])
+                            now_t.setDate(now_t.getDate() + 1)
+                        }
+                    }
+                    now_t.setHours(now_t.getHours() + Math.floor(left_over), now_t.getMinutes() + ((left_over*10)%10)*60)
+                    element.deadline = new Date(Date.parse(now_t))
+                }
+                console.log(now_t.getHours(), now_t.getDate())
+            
+        });
+
+
         var tasks = [];
         let n = new Date()
         

@@ -10,9 +10,8 @@ const totalTime = (start, now_t, init_time, hours, weekend, process) => {
         })
         if(process[ptr].time_req && process[ptr].time_req != 0 && (process[ptr].status == 0 || process[ptr].status == -1 || process[ptr].status == 4)) {
             time += process[ptr].time_req
-            if(now_t != 0) {
-                let now_d = now_t.getDay();
-                if(now_d == 0) {
+            if(now_t != 0) { 
+                while(weekend.includes(now_t.getDay)) {
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
                 }
@@ -24,9 +23,18 @@ const totalTime = (start, now_t, init_time, hours, weekend, process) => {
                         now_t.setHours(now_t.getHours() + Math.floor(val), now_t.getMinutes() + ((val*10)%10)*60) 
                         process[ptr].deadline = new Date(Date.parse(now_t))
                     } else {
-                        let dis = ((init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) - (now_t.getHours() + now_t.getMinutes())
+                                            
+                        let dis = ((init_time[0] + hours[0]) + (init_time[1]/60 + hours[1])) - (now_t.getHours() + now_t.getMinutes()/60)
                         var left_over = process[ptr].time_req/(1000*60*60) - dis
+                        now_t.setHours(init_time[0], init_time[1])
+                        now_t.setDate(now_t.getDate() + 1)
+                        
+                        while(weekend.includes(now_t.getDay())) {
+                            now_t.setDate(now_t.getDate() + 1) 
+                        }
+
                         while(left_over > hours[0] + hours[1]) {
+                            console.log("i")
                             if(weekend.includes(now_t.getDay())) {
                                 now_t.setDate(now_t.getDate() + 1) 
                             } else {
