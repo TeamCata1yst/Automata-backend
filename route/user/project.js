@@ -27,7 +27,7 @@ router.get('/', isUser, async (req, res)=>{
             });
 	});
         
-        const now_t = arr[0].init_time
+        const now_t = new Date(Date.parse(arr[0].init_time))
          
         var hours = [Math.ceil(com.hours), (com.hours*10)%10]
         var init_time = c.map( x => {
