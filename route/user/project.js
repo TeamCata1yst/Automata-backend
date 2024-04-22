@@ -28,14 +28,14 @@ router.get('/', isUser, async (req, res)=>{
 	});
         
         const now_t = arr[0].init_time
-        
+         
         var hours = [Math.ceil(com.hours), (com.hours*10)%10]
         var init_time = c.map( x => {
             return parseInt(x)
         })        
         var weekend = com.weekend
         arr.forEach( element => {
-            
+                console.log(now_t)
                 while(weekend.includes(now_t.getDay())) {
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
