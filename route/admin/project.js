@@ -186,10 +186,10 @@ router.post('/priority', isAdmin, async (req, res) => {
             
         if(inc) {
             await Project.findOneAndUpdate({ priority: priority+1, company: req.session.company}, { priority });
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date(Date.now()) });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date() });
         } else {
             await Project.findOneAndUpdate({ priority: priority-1, company: req.session.company}, {priority: priority});
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date(Date.now()) });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date() });
         }
 
         res.json({'status':'success'});
