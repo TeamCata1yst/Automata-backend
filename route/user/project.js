@@ -21,7 +21,7 @@ router.get('/', isUser, async (req, res)=>{
                     elem.project_id = project.id
                     elem.date = project.date
                     elem.priority = project.priority;
-                    elem.init_time = new Date(Date.parse(project.init_time));
+                    elem.init_time = project.init_time;
                     arr.push(elem)
                 }
             });
@@ -29,7 +29,7 @@ router.get('/', isUser, async (req, res)=>{
         
         const now_t = new Date(Date.parse(arr[0].init_time))
          
-        var hours = [Math.ceil(com.hours), (com.hours*10)%10]
+        var hours = [Math.floor(com.hours), (com.hours*10)%10]
         var init_time = c.map( x => {
             return parseInt(x)
         })        
@@ -44,8 +44,9 @@ router.get('/', isUser, async (req, res)=>{
                 if(now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 && now_t.getHours() + now_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10)) {
                     element.init_time = new Date(Date.parse(now_t))
                     var after_t = new Date(Date.parse(now_t) + element.time_req)
-                    if((after_t.getHours() + after_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 && after_t.getHours() + after_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10)) && now_t.getDate() == after_t.getDate() && now_t.getFullYear() == after_t.getFullYear() && now_t.getMonth() == after_t.getMonth()) {
+                    if((after_t.getHours() + after_t.getMinutes()/60 >= init_time[0] + init_time[1]/60) && (after_t.getHours() + after_t.getMinutes()/60 <= (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10)) && now_t.getDate() == after_t.getDate() && now_t.getFullYear() == after_t.getFullYear() && now_t.getMonth() == after_t.getMonth()) {
                         let val = element.time_req/(1000*60*60)
+                        console.log("yes", now_t.getHours(), (after_t.getHours() + after_t.getMinutes()/60), init_time[0], hours[0], (init_time[1]/60 + hours[1]/10))
                         now_t.setHours(now_t.getHours() + Math.floor(val), now_t.getMinutes() + ((val*10)%10)*6) 
                         element.deadline = new Date(Date.parse(now_t))
                     } else {

@@ -99,7 +99,7 @@ router.post('/create', isAdmin, async (req, res)=>{
 	var { name, client, email, mobile_no, buffer, template, process, resources, city } = req.body;
         var comp = await Company.findOne({ comp_name: req.session.company})
 
-        var h = [Math.ceil(comp.hours), (comp.hours*10)%10]
+        var h = [Math.floor(comp.hours), (comp.hours*10)%10]
         var init_time = comp.start_time.split(':').map( x => {
             return parseInt(x)
         })
@@ -186,10 +186,10 @@ router.post('/priority', isAdmin, async (req, res) => {
             
         if(inc) {
             await Project.findOneAndUpdate({ priority: priority+1, company: req.session.company}, { priority });
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date() });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date(Date.now()) });
         } else {
             await Project.findOneAndUpdate({ priority: priority-1, company: req.session.company}, {priority: priority});
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date() });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date(Date.now()) });
         }
 
         res.json({'status':'success'});
