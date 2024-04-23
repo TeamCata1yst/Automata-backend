@@ -134,7 +134,7 @@ router.post('/create', isAdmin, async (req, res)=>{
         }
         
         const priority = await Project.countDocuments();
-	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company });
+	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company, init_time: new Date() });
 	await project.save();
         
         res.json({'status':'success'});
@@ -183,14 +183,15 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 router.post('/priority', isAdmin, async (req, res) => {
     try {
         const { id, priority, inc} = req.body;
-    
+            
         if(inc) {
             await Project.findOneAndUpdate({ priority: priority+1, company: req.session.company}, { priority });
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1});
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date() });
         } else {
             await Project.findOneAndUpdate({ priority: priority-1, company: req.session.company}, {priority: priority});
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1})
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date() });
         }
+
         res.json({'status':'success'});
     } catch(error) {
         console.log(error);

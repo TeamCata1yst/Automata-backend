@@ -33,7 +33,9 @@ const projectSchema = new mongoose.Schema({
     },
     date:{
 	type: Date// Number,
-	
+    },
+    init_time: {
+        type: Date
     },
     buffer:{
 	type: Number,

@@ -21,7 +21,7 @@ router.get('/', isUser, async (req, res)=>{
                     elem.project_id = project.id
                     elem.date = project.date
                     elem.priority = project.priority;
-
+                    elem.init_time = project.init_time;
                     arr.push(elem)
                 }
             });
