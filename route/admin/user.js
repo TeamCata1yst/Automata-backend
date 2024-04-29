@@ -33,19 +33,21 @@ router.get('/:dep_name', isAdmin, async (req, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try{
-        const { name, gender, department, email, mobile_no } = req.body;
+        const { name, gender, department, email, mobile_no, password } = req.body;
 	console.log("Create: ") 
-        if(!name || (typeof gender == 'undefined') || !email || !department || !mobile_no){
+        if(!name || (typeof gender == 'undefined') || !email || !department || !mobile_no || !password){
             console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
-	var password = "";
+	/*
+        var password = "";
 	let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	var length = characters.length;
 	for (var i = 0; i < 12; i++) {
 	    password += characters.charAt(Math.floor(Math.random() * length));
 	}
 	console.log(req.body)
+        */
         const user = new User({ name, department, gender, email, mobile_no, password, company: req.session.company });
         const result = await user.save();
 	console.log(result)

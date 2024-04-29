@@ -8,7 +8,7 @@ const totalTime = (start, now_t, init_time, hours, weekend, process) => {
         ptr = process.findIndex( (obj) => {
             return obj.task_id == ptr
         })
-        if(process[ptr].time_req && process[ptr].time_req != 0 && (process[ptr].status == 0 || process[ptr].status == -1 || process[ptr].status == 4)) {
+        if(process[ptr].time_req && process[ptr].time_req != 0 && (!process[ptr].status || (process[ptr].status == 0 || process[ptr].status == -1 || process[ptr].status == 4))) {
             time += process[ptr].time_req
             if(now_t != 0) { 
                 while(weekend.includes(now_t.getDay)) {
