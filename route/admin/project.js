@@ -96,7 +96,6 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try {
-        console.log(req.body)
 	var { name, client, email, mobile_no, buffer, template, process, resources, city } = req.body;
         var comp = await Company.findOne({ comp_name: req.session.company})
 
@@ -159,9 +158,43 @@ router.post('/delete', isAdmin, async (req, res)=>{
 
 router.post('/update', isAdmin, async (req, res)=>{
     try {
-	const { id, name, resources, process } = req.body;
-	await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process });
-	res.json({'status':'success'});
+	const { id, name, resources, process, client, email, mobile_no, buffer, city  } = req.body;
+        var val = await Client.findOne({ company: req.session.company, $or: [{ email }, { mobile_no }] })
+        if(val) {
+            await Project.updateMany({ client: val.name, company: req.session.company }, { client } )
+            await Client.findOneAndUpdate({ company: req.session.company, $or: [{ email }, { mobile_no }] }, { email, mobile_no, name: client })
+        } else {
+            val = new Client({ email, mobile_no, name: client, company: req.session.company })
+            await val.save()
+        }	
+        if(buffer) {
+        var comp = await Company.findOne({ comp_name: req.session.company})
+        var proj = await Project.findOne({ id });
+
+        var h = [Math.floor(comp.hours), (comp.hours*10)%10]
+        var init_time = comp.start_time.split(':').map( x => {
+            return parseInt(x)
+        })
+
+	var { t } = totalTime(0, proj.init_time, init_time, h, comp.weekend, process);
+	let total_time = t * buffer;
+	let date = proj.init_time;
+	let no_of_hrs = comp.hours;
+	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
+	
+	let no_of_wd = comp.weekend;
+        
+	for(let i=0; i < no_of_days; i++) {
+	    date += 24*60*60*1000;
+            if(no_of_wd.includes(new Date(date).getDay())) {
+                date += 24*60*60*1000;
+            }
+	}
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, buffer, city, deadline: date  });
+        } else {
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, deadline: date  });
+        }
+        res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
 	res.status(500).json({'status':'failed', 'error':'internal error'});
