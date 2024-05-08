@@ -168,28 +168,23 @@ router.post('/update', isAdmin, async (req, res)=>{
             await val.save()
         }	
         if(buffer) {
-        var comp = await Company.findOne({ comp_name: req.session.company})
-        var proj = await Project.findOne({ id });
+            var comp = await Company.findOne({ comp_name: req.session.company})
+            var proj = await Project.findOne({ id });
 
-        var h = [Math.floor(comp.hours), (comp.hours*10)%10]
-        var init_time = comp.start_time.split(':').map( x => {
-            return parseInt(x)
-        })
-
-	var { t } = totalTime(0, proj.init_time, init_time, h, comp.weekend, process);
-	let total_time = t * buffer;
-	let date = proj.init_time;
-	let no_of_hrs = comp.hours;
-	let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
+	    var { t } = totalTime(0, 0, 0, 0, 0, process);
+	    let total_time = t * buffer;
+	    let date = proj.init_time;
+	    let no_of_hrs = comp.hours;
+	    let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
 	
-	let no_of_wd = comp.weekend;
+	    let no_of_wd = comp.weekend;
         
-	for(let i=0; i < no_of_days; i++) {
-	    date += 24*60*60*1000;
-            if(no_of_wd.includes(new Date(date).getDay())) {
-                date += 24*60*60*1000;
-            }
-	}
+	    for(let i=0; i < no_of_days; i++) {
+	        date += 24*60*60*1000;
+                if(no_of_wd.includes(new Date(date).getDay())) {
+                    date += 24*60*60*1000;
+                }
+	    }
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, buffer, city, deadline: date  });
         } else {
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, deadline: date  });
