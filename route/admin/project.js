@@ -19,8 +19,9 @@ router.get('/id/:id', isAdmin, async (req, res)=>{
     try {
         const { id } = req.params;
 	const result = await Project.findOne({ id, company: req.session.company });
+        const client = await Client.findOne({id: result.client_id})
         if(result) {
-            return res.json({"status":"success", result});
+            return res.json({"status":"success", result, client});
         }
         res.json({"status":"failed", "error":"No such process"})
     } catch(error) { 
