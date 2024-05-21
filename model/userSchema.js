@@ -35,10 +35,7 @@ const userSchema = new mongoose.Schema({
 	type: Boolean,  //0 == male, 1 == female
 	required: true
     },
-    department:{
-	type: String,
-	required: true
-    },
+    department:[],
     email:{
         type: String,
         required: true

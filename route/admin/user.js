@@ -48,9 +48,15 @@ router.post('/create', isAdmin, async (req, res)=>{
 	}
 	console.log(req.body)
         */
-        const user = new User({ name, department, gender, email, mobile_no, password, company: req.session.company });
-        const result = await user.save();
-	console.log(result)
+        var result;
+        var u = await User.findOne({ mobile_no, company: req.session.company });
+        if(u) {
+            result = await User.findOneAndUpdate({ mobile_no }, { $push: { department } }) 
+        } else {
+            const user = new User({ name, department, gender, email, mobile_no, password, company: req.session.company });
+            result = await user.save();
+            console.log(result)
+        }
 	await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: department } }}, { $push:{ 'department.$.users': result.id }});
         res.json({'status':'success'});
     } catch(error){
@@ -72,16 +78,21 @@ router.post('/edit', isAdmin, async (req, res) => {
 
 router.post('/delete', isAdmin, async (req, res)=>{
     try{
-        const { id } = req.body;
+        const { id, department } = req.body;
 	console.log("Delete: ")
-        if(!id){
+        if(!id || !department){
             console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         } 
-	const val = await User.findOneAndDelete({ id, company: req.session.company });
+	const val = await User.findOne({ id, company: req.session.company });
 	if(val){
-	    await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: val.department } }}, { $pull:{ 'department.$.users': val.id }});
-	}
+            await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: val.department } }}, { $pull:{ 'department.$.users': val.id }});
+	    if(val.department.length == 1) {
+                await User.findOneAndDelete({ id, company: req.session.company });
+            } else {
+                await User.findOneAndUpdate({ id, company: req.session.company }, { $pull: { department } });
+            }
+        }
 	res.json({'status':'success'});
     } catch(error){
         console.log(error);

@@ -40,4 +40,15 @@ router.post('/edit', isAdmin, async (req, res)=>{
     }
 });
 
+router.post('/delete', isAdmin, async (req, res)=>{
+    try{
+        const { id } = req.body;
+        await Client.findOneAndDelete({ id, company: req.session.company });
+        res.json({'status':'success'});
+    } catch(error){
+        console.log(error);
+        res.status(500).json({'status':'failed', 'error':'internal error'});
+    }
+});
+
 module.exports = router;
