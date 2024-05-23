@@ -174,7 +174,7 @@ router.post('/update', isAdmin, async (req, res)=>{
 	    //var { t } = totalTime(0, 0, 0, 0, [], process);
 	    let total_time = proj.remaining_time * buffer;
             console.log(total_time);
-	    let date = proj.init_time;
+	    let date = Date.parse(proj.init_time);
 	    let no_of_hrs = comp.hours;
 	    let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
 	
@@ -184,8 +184,10 @@ router.post('/update', isAdmin, async (req, res)=>{
 	        date += 24*60*60*1000;
                 if(no_of_wd.includes(new Date(date).getDay())) {
                     date += 24*60*60*1000;
+                    console.log("wdwdwdw")
                 }
 	    }
+            console.log(date)
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, buffer, city, deadline: date  });
         } else {
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, });
