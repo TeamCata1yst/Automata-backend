@@ -171,8 +171,8 @@ router.post('/update', isAdmin, async (req, res)=>{
             var comp = await Company.findOne({ comp_name: req.session.company})
             var proj = await Project.findOne({ id });
 
-	    var { t } = totalTime(0, 0, 0, 0, [], process);
-	    let total_time = t * buffer;
+	    //var { t } = totalTime(0, 0, 0, 0, [], process);
+	    let total_time = proj.remaining_time * buffer;
 	    let date = proj.init_time;
 	    let no_of_hrs = comp.hours;
 	    let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
