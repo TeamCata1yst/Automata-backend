@@ -187,7 +187,7 @@ router.post('/update', isAdmin, async (req, res)=>{
 	    }
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, buffer, city, deadline: date  });
         } else {
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, deadline: date  });
+            await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, });
         }
         res.json({'status':'success'});
     } catch(error) {
