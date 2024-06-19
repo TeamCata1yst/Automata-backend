@@ -6,8 +6,8 @@ const { totalTime } = require('../../misc/time')
 
 router.get('/', isUser, async (req, res)=>{
     try {
-        const { id } = req.session;    //Only for testing, to be changed with req.session.user.id, also convert it to GET req after session is implemented
-	const projects = await Project.find({ resources: id, company: req.session.company });
+        const { id } = req.session;
+        const projects = await Project.find({ resources: id, company: req.session.company });
         const com = await Company.findOne({ comp_name: req.session.company })
         
         var c = com.start_time.split(':')
@@ -15,16 +15,16 @@ router.get('/', isUser, async (req, res)=>{
     
         const arr = [];
         projects.forEach( (project, index) => {
-            project.process.forEach( (elem, _) => {
-                if(elem.selected_resource == id) {
-                    elem.project_name = project.name;
-                    elem.project_id = project.id
-                    elem.date = project.date
-                    elem.priority = project.priority;
-                    elem.init_time = project.init_time;
-                    arr.push(elem)
+            for(let i = project.process[0].next[0]; i < project.process.length; i++) {//project.process.forEach( (elem, _) => {
+                if(project.process[i].selected_resource == id) {
+                    project.process[i].project_name = project.name;
+                    project.process[i].project_id = project.id
+                    project.process[i].date = project.date
+                    project.process[i].priority = project.priority;
+                    project.process[i].init_time = project.init_time;
+                    arr.push(project.process[i])
                 }
-            });
+            }//);
 	});
         console.log(arr[0])
         const now_t = new Date(Date.parse(arr[0].init_time))
