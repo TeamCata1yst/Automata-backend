@@ -111,8 +111,9 @@ router.get('/', isUser, async (req, res)=>{
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
 
                 if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
+                    if(task.status != true) 
+                        tasks[i].tasks.push(task)
                     
-                    tasks[i].tasks.push(task)
                     val = 1
                     break
                 }
@@ -120,7 +121,8 @@ router.get('/', isUser, async (req, res)=>{
             if(val == 0) {
                 let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
-                tasks.push({ date: t, tasks:[ task ]})
+                if(task.status != true)
+                    tasks.push({ date: t, tasks:[ task ]})
             }
         });
 

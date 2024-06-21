@@ -6,9 +6,7 @@ if(process.argv.length != 5) {
 
 function change_start(counter, task_id) {
     while(counter != task_id) {
-        pro[counter].selected_resource = "";
-        pro[counter].name = "";
-        pro[counter].dept = "";
+        pro[counter].status = true;
 
         if(pro[counter].next.length > 1) {
             break;
@@ -27,6 +25,7 @@ function change_start(counter, task_id) {
 }
 
 const fs  = require('fs');
+
 const db = process.argv[2];
 const project_id = process.argv[3];
 const task_id = process.argv[4];
