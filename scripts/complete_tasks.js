@@ -1,12 +1,12 @@
 if(process.argv.length != 5) {
     console.log("Error: invalid arguments");
-    console.log("Help:\n\tnode change_start.js projects.json project_id task_id\n\nIt requires projects from database. Export projects from database as JSON.")
+    console.log("Help:\n\tnode complete_tasks.js projects.json project_id task_id\n\nIt requires projects from database. Export projects from database as JSON.")
     process.exit(0);
 }
 
-function change_start(counter, task_id) {
+function set_complete(counter, task_id) {
     while(counter != task_id) {
-        pro[counter].status = true;
+        pro[counter].status = 1;
 
         if(pro[counter].next.length > 1) {
             break;
@@ -19,7 +19,7 @@ function change_start(counter, task_id) {
     }
     if(counter != task_id) {
         pro[counter].next.forEach(x => {
-            change_start(x, task_id);
+            set_complete(x, task_id);
         })
     }
 }
@@ -35,10 +35,8 @@ let index = data.findIndex(x => x.id == project_id);
 
 let pro = data[index].process;
 
-change_start(1, task_id);
+set_complete(0, task_id);
 data[index].process = pro;
-data[index].process[0].next = [ task_id ]
 
-console.log(data[index].process)
 console.log("Change Successful.")
-fs.writeFileSync("we.json", JSON.stringify(pro))
+fs.writeFileSync("work.projects.json", JSON.stringify(data))
