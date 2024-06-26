@@ -35,12 +35,14 @@ router.get('/', isUser, async (req, res)=>{
         })        
         var weekend = com.weekend
         arr.forEach( element => {
-/*                
+                
                 if(element.status != 0 && element.status != -1 ) {
-                    if(Date.parse(now_t) < Date.parse(element.complete_time) ) 
-                        now_t = element.complete_time
-                }
-*/
+                    if(Date.parse(arr[0].init_time) > Date.parse(element.complete_time) ) {
+                        return
+                    }
+                }   
+                
+
                 while(weekend.includes(now_t.getDay())) {
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
@@ -116,7 +118,7 @@ router.get('/', isUser, async (req, res)=>{
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
 
                 if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
-                    //if(task.status != true) 
+                    if(task.status != true) 
                         tasks[i].tasks.push(task)
                     
                     val = 1
@@ -126,7 +128,7 @@ router.get('/', isUser, async (req, res)=>{
             if(val == 0) {
                 let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
-                //if(task.status != true)
+                if(task.status != true)
                     tasks.push({ date: t, tasks:[ task ]})
             }
         });
@@ -150,7 +152,8 @@ router.post('/task', isUser, async (req, res)=>{
                 }
             }}, { '$set': {
 		'process.$.status': status,
-                'process.$.remark': remark
+                'process.$.remark': remark,
+                'process.$.complete_time': new Date()
 	    }}, {
                 'new': true
             });

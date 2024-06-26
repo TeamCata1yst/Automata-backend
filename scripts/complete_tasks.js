@@ -7,7 +7,7 @@ if(process.argv.length != 5) {
 function set_complete(counter, task_id) {
     while(counter != task_id) {
         pro[counter].status = 1;
-
+        pro[counter].complete_time = new Date();
         if(pro[counter].next.length > 1) {
             break;
         }
