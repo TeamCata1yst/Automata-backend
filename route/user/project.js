@@ -26,7 +26,10 @@ router.get('/', isUser, async (req, res)=>{
                 }
             }//);
 	});
-        console.log(arr[0])
+        console.log(arr);
+        if(arr.length == 0) {
+            return res.status(200).json([]);
+        }
         const now_t = new Date(Date.parse(arr[0].init_time))
          
         var hours = [Math.floor(com.hours), (com.hours*10)%10]
