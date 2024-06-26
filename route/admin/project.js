@@ -149,6 +149,9 @@ router.post('/delete', isAdmin, async (req, res)=>{
         const { id } = req.body;
         const val = await Project.findOneAndDelete({ id, company: req.session.company });
         await Project.updateMany({ company: req.session.company, priority:{ $gt: val.priority} }, { $inc: { priority: -1}});
+        if(val.priority == 0) {
+            Project.findOneAndUpdate({ company: req.session.company, priority: 0 }, { init_time: new Date()});
+        }
         res.json({'status':'success'});
     } catch(error) {
         res.status(500).json({"status":"failed", "error":"internal error"});
