@@ -8,7 +8,32 @@ const { totalTime } = require('../../misc/time');
 router.get('/', isAdmin, async (req, res)=>{
     try {
 	const projects = await Project.find({ company: req.session.company });
-	res.json(projects);
+	    let n = []
+            projects.forEach( (e, i) => {
+            var mil = {}
+            e.process.filter( x => x.milestone ).forEach( elem => {
+                if(!mil[elem.milestone_tag]) {
+                    mil[elem.milestone_tag] = []    
+                }
+
+                mil[elem.milestone_tag].push({ time_req: elem.time_req, status: elem.status })
+            })
+            Object.entries(mil).forEach( (elem, index) => {
+                var v = elem[1].reduce((n, {time_req}) => n + time_req, 0)
+                elem[1].forEach( (x, j) => {
+                    elem[1][j].percentage = (x.time_req/v) * 100
+                })
+                mil[elem[0]] = elem[1]
+            })
+
+            console.log(mil)
+            n.push({ ...project[i]._doc })
+            n[i].milestones = Object.entries(mil).map(x => {
+                return { name: x[0], tasks: x[1] }
+            })
+        })
+
+        res.json(n);
     } catch(error) { 
 	console.log(error);
 	res.status(500).json({'status':'failed', 'error':'internal error'});
