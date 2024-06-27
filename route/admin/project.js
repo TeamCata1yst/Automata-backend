@@ -27,7 +27,7 @@ router.get('/', isAdmin, async (req, res)=>{
             })
 
             console.log(mil)
-            n.push({ ...project[i]._doc })
+            n.push({ ...projects[i]._doc })
             n[i].milestones = Object.entries(mil).map(x => {
                 return { name: x[0], tasks: x[1] }
             })
