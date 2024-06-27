@@ -9,6 +9,7 @@ const projectSchema = new mongoose.Schema({
 	type: String,
 	required: true
     },
+    milestones: [],
     company: {
         type: String
     },

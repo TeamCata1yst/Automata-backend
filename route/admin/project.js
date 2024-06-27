@@ -121,7 +121,7 @@ router.post('/template/delete', isAdmin, async (req, res)=>{
 
 router.post('/create', isAdmin, async (req, res)=>{
     try {
-	var { name, client, email, mobile_no, buffer, template, process, resources, city } = req.body;
+	var { name, client, email, mobile_no, buffer, template, process, resources, city, milestones } = req.body;
         var comp = await Company.findOne({ comp_name: req.session.company})
 
         var h = [Math.floor(comp.hours), (comp.hours*10)%10]
@@ -157,9 +157,12 @@ router.post('/create', isAdmin, async (req, res)=>{
             val = new Client({ email, mobile_no, name: client, company: req.session.company })
             await val.save()
         }
-        
+        let obj = [];
+        milestones.forEach(x => {
+            obj.push({name: x, rating: 0})
+        })
         const priority = await Project.countDocuments();
-	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company, init_time: new Date() });
+	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company, init_time: new Date(), milestones: obj });
 	await project.save();
         
         res.json({'status':'success'});
