@@ -14,16 +14,16 @@ const milestones = [];
 
 const data = JSON.parse(fs.readFileSync(db));
 let mil =  [ 
-    { name: "Engagement ", rating: -1},
-    { name: "Design sign Off", rating: -1},
-    { name: "Design Development (DD)", rating: -1},
-    { name: "Foundation Packet", rating: -1},
-    { name: "Architecture Packet", rating: -1},
-    { name: "Interior Presentation-1", rating: -1},
-    { name: "Interior Presentation-2", rating: -1},
-    { name: "Interior Packet-1", rating: -1},
-    { name: "Interior Packet-2", rating: -1},
-    { name: "After completion", rating: -1}
+    { name: "Engagement ", rating: -1, client_satisfaction: -1},
+    { name: "Design sign Off", rating: -1, client_satisfaction: -1},
+    { name: "Design Development (DD)", rating: -1, client_satisfaction: -1},
+    { name: "Foundation Packet", rating: -1, client_satisfaction: -1},
+    { name: "Architecture Packet", rating: -1, client_satisfaction: -1},
+    { name: "Interior Presentation-1", rating: -1, client_satisfaction: -1},
+    { name: "Interior Presentation-2", rating: -1, client_satisfaction: -1},
+    { name: "Interior Packet-1", rating: -1, client_satisfaction: -1},
+    { name: "Interior Packet-2", rating: -1, client_satisfaction: -1},
+    { name: "After completion", rating: -1, client_satisfaction: -1}
   ]
 data.forEach((x, i) => {
     data[i].milestones = mil

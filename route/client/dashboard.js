@@ -8,7 +8,6 @@ router.get('/projects', isClient, async (req, res) =>{
         const { id, company } = req.session;
         var n = []
         const project = await Project.find({ client_id: id, company });
-        console.log(id, company)
         project.forEach( (e, i) => {
             var mil = {}
             e.process.filter( x => x.milestone ).forEach( elem => {
@@ -26,13 +25,12 @@ router.get('/projects', isClient, async (req, res) =>{
                 mil[elem[0]] = elem[1]
             })
 
-            console.log(mil)
             n.push({ ...project[i]._doc })
-            n[i].milestones = Object.entries(mil).map(x => {
-                return { name: x[0], tasks: x[1] }
+            n[i].milestones.forEach((y, j) => {
+                n[i].milestones[j]['tasks'] = mil[n[i].milestones[j].name]
             })
         })
-        console.log(n)
+        
         res.json({ 'status': 'success', 'result': n })
     } catch(error) {
         console.log(error);

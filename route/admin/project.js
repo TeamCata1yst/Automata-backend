@@ -8,8 +8,8 @@ const { totalTime } = require('../../misc/time');
 router.get('/', isAdmin, async (req, res)=>{
     try {
 	const projects = await Project.find({ company: req.session.company });
-	    let n = []
-            projects.forEach( (e, i) => {
+	let n = []
+        projects.forEach( (e, i) => {
             var mil = {}
             e.process.filter( x => x.milestone ).forEach( elem => {
                 if(!mil[elem.milestone_tag]) {
@@ -31,11 +31,6 @@ router.get('/', isAdmin, async (req, res)=>{
             n[i].milestones.forEach((y, j) => {
                 n[i].milestones[j]['tasks'] = mil[n[i].milestones[j].name]
             })
-            console.log(n)
-             /*       = Object.entries(mil).map(x => {
-                console.log()
-                return { name: x[0], tasks: x[1], rating: e.milestones.find(t => t.name == x[0])}
-            })*/
         })
 
         res.json(n);

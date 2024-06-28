@@ -23,6 +23,7 @@ app.use('/user/project', require('./route/user/project'));
 
 // Client APIs
 app.use('/client/auth', require('./route/client/auth'));
+app.use('/client/review', require('./route/client/review'));
 app.use('/client/dashboard', require('./route/client/dashboard'));
 
 // Admin APIs
