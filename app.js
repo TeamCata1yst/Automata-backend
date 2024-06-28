@@ -31,6 +31,7 @@ app.use('/admin/user', require('./route/admin/user'));
 app.use('/admin/client', require('./route/admin/client'));
 app.use('/admin/profile', require('./route/admin/profile'));
 app.use('/admin/project', require('./route/admin/project'));
+app.use('/admin/review', require('./route/admin/review'));
 app.use('/admin/department', require('./route/admin/department'))
 
 // Org APIs
