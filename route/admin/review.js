@@ -5,16 +5,17 @@ const { isAdmin } = require('../../middleware/priv_check');
 router.post('/', isAdmin, async (req, res) => {
     try {
         const { id, milestone, rating } = req.body;
-        await Project.findOneAndUpdate({ company: req.session.company, id,
+        let a = await Project.findOneAndUpdate({ company: req.session.company, id,
             milestones: { 
                 $elemMatch: {
-                    'milestones.$.name': milestone
+                    'name': milestone
                 }
             }}, { '$set': {
                 'milestones.$.rating': rating
             }
             });
         res.status(201).json({'status':'success'});
+        console.log(a, "asdasdasdsadsadasdasdasdsadasdasdadasdsadsadasdasdadsadsaadsadas")
     } catch(error) {
         console.log(error);
         res.status(500).json({'status':'failed', 'error':'internal error'});

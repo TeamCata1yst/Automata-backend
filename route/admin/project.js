@@ -26,11 +26,16 @@ router.get('/', isAdmin, async (req, res)=>{
                 mil[elem[0]] = elem[1]
             })
 
-            console.log(mil)
+            
             n.push({ ...projects[i]._doc })
-            n[i].milestones = Object.entries(mil).map(x => {
-                return { name: x[0], tasks: x[1] }
+            n[i].milestones.forEach((y, j) => {
+                n[i].milestones[j]['tasks'] = mil[n[i].milestones[j].name]
             })
+            console.log(n)
+             /*       = Object.entries(mil).map(x => {
+                console.log()
+                return { name: x[0], tasks: x[1], rating: e.milestones.find(t => t.name == x[0])}
+            })*/
         })
 
         res.json(n);
@@ -159,7 +164,7 @@ router.post('/create', isAdmin, async (req, res)=>{
         }
         let obj = [];
         milestones.forEach(x => {
-            obj.push({name: x, rating: 0})
+            obj.push({name: x, rating: -1})
         })
         const priority = await Project.countDocuments();
 	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company, init_time: new Date(), milestones: obj });
