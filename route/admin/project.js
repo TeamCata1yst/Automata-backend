@@ -244,17 +244,12 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 });
 
 router.post('/priority', isAdmin, async (req, res) => {
-    try {
-        const { id, priority, inc} = req.body;
-            
-        if(inc) {
-            await Project.findOneAndUpdate({ priority: priority+1, company: req.session.company}, { priority });
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority+1, init_time: new Date() });
-        } else {
-            await Project.findOneAndUpdate({ priority: priority-1, company: req.session.company}, {priority: priority});
-            await Project.findOneAndUpdate({ id, company: req.session.company }, { priority: priority-1, init_time: new Date() });
-        }
-
+    try { 
+    
+        await req.body.projects.forEach(async x => {
+            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, {priority: x.priority});
+            console.log(a)
+        });
         res.json({'status':'success'});
     } catch(error) {
         console.log(error);
