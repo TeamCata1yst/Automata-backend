@@ -247,7 +247,7 @@ router.post('/priority', isAdmin, async (req, res) => {
     try { 
     
         await req.body.projects.forEach(async x => {
-            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, {priority: x.priority});
+            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, {priority: x.priority, init_time: new Date()});
             console.log(a)
         });
         res.json({'status':'success'});
