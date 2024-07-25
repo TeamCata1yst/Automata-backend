@@ -18,7 +18,7 @@ router.get('/', isAdmin, async (req, res)=>{
 
                 mil[elem.milestone_tag].push({ time_req: elem.time_req, status: elem.status })
             })
-            Object.entries(mil).forEach( (elem, index) => {
+            Object.entries(mil).forEach( (elem, _) => {
                 var v = elem[1].reduce((n, {time_req}) => n + time_req, 0)
                 elem[1].forEach( (x, j) => {
                     elem[1][j].percentage = (x.time_req/v) * 100
@@ -96,7 +96,6 @@ router.post('/template/copy', isAdmin, async (req, res) => {
 router.post('/template/create', isAdmin, async (req, res)=>{
     try {
 	const { name, process, milestones } = req.body;
-        console.log(req.body)
 	const { t } = totalTime(0, 0, 0, 0, [], process);
 	const template = new Template({ name, process, time: t, milestones, company: req.session.company });
 	await template.save();
@@ -204,7 +203,6 @@ router.post('/update', isAdmin, async (req, res)=>{
 
 	    //var { t } = totalTime(0, 0, 0, 0, [], process);
 	    let total_time = proj.remaining_time * buffer;
-            console.log(total_time);
 	    let date = Date.parse(proj.init_time);
 	    let no_of_hrs = comp.hours;
 	    let no_of_days = Math.ceil((total_time/(1000*60*60))/no_of_hrs);
@@ -215,10 +213,8 @@ router.post('/update', isAdmin, async (req, res)=>{
 	        date += 24*60*60*1000;
                 if(no_of_wd.includes(new Date(date).getDay())) {
                     date += 24*60*60*1000;
-                    console.log("wdwdwdw")
                 }
 	    }
-            console.log(date)
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, buffer, city, deadline: date  });
         } else {
             await Project.findOneAndUpdate({ id, company: req.session.company }, { name, resources, process, client, client_id: val.id, email, mobile_no, city, });
@@ -235,8 +231,34 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 	const { id, name, process, milestones } = req.body;
 	// checks
         const { t } = totalTime(0, 0, 0, 0, [], process);
-	await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
-	res.json({'status':'success'});
+	let temp = await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
+	let projects = await Project.find({ template: temp.name, company: req.session.company });
+        projects.forEach( async x => {
+            if(process) {
+                for(let i = 0; i < process.length; i++) {
+                    process[i].status = x.process[i].status;
+                    process[i].selected_resource = x.process[i].selected_resource;
+                    process[i].init_time = x.process[i].init_time;
+                    process[i].deadline = x.process[i].deadline;
+                    process[i].remark = x.process[i].remark;
+                }
+                await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, process })
+            }
+            
+            if(milestones){
+                let miles = [];
+                milestones.forEach(y => {
+                    let a = x.milestones.find(o => o.name == y);
+                    if(a) {
+                        miles.push(a);
+                    } else {
+                        miles.push({name: y, rating: -1, client_satisfaction: -1})
+                    }
+                });
+                await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, milestones: miles })
+            }
+        });
+        res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
 	res.status(500).json({'status':'failed', 'error':'internal error'});
@@ -244,11 +266,9 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 });
 
 router.post('/priority', isAdmin, async (req, res) => {
-    try { 
-    
+    try {
         await req.body.projects.forEach(async x => {
-            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, {priority: x.priority, init_time: new Date()});
-            console.log(a)
+            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, { priority: x.priority, init_time: new Date() });
         });
         res.json({'status':'success'});
     } catch(error) {
