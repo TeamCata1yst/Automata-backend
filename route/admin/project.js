@@ -235,6 +235,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 	let projects = await Project.find({ template: temp.name, company: req.session.company });
         for(let n = 0; n < projects.length; n++) {
             if(process) {
+                console.log(projects[n])
                 for(let i = 0; i < process.length; i++) {
                     console.log(projects[n].process[i])
                     process[i].status = projects[n].process[i].status;
