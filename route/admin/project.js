@@ -229,34 +229,38 @@ router.post('/update', isAdmin, async (req, res)=>{
 router.post('/template/update', isAdmin, async (req, res)=>{
     try {
 	const { id, name, process, milestones } = req.body;
-	// checks
+	while(true) {
+            if(process[process.length - 1].name != "") {
+                break;
+            }
+            process.pop();
+        }
         const { t } = totalTime(0, 0, 0, 0, [], process);
 	let temp = await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
 	let projects = await Project.find({ template: temp.name, company: req.session.company });
         for(let n = 0; n < projects.length; n++) {
             if(process) {
-                console.log(projects[n])
+                console.log(projects[n].process)
                 for(let i = 0; i < process.length; i++) {
-                    console.log(projects[n].process[i])
-                    process[i].status = projects[n].process[i].status;
-                    process[i].selected_resource = projects[n].process[i].selected_resource;
-                    process[i].init_time = projects[n].process[i].init_time;
-                    process[i].deadline = projects[n].process[i].deadline;
-                    process[i].remark = projects[n].process[i].remark;
+                    if(projects[n].process[i]) {
+                        process[i].status = projects[n].process[i].status;
+                        process[i].selected_resource = projects[n].process[i].selected_resource;
+                        process[i].init_time = projects[n].process[i].init_time;
+                        process[i].deadline = projects[n].process[i].deadline;
+                        process[i].remark = projects[n].process[i].remark;
+                    }
                 }
             }
             
-            if(milestones){
-                let miles = [];
-                milestones.forEach(y => {
-                    let a = projects[n].milestones.find(o => o.name == y);
-                    if(a) {
-                        miles.push(a);
-                    } else {
-                        miles.push({name: y, rating: -1, client_satisfaction: -1})
-                    }
-                });
-            }
+            miles = [];
+            milestones.forEach(y => {
+                let a = projects[n].milestones.find(o => o.name == y);
+                if(a) {
+                    miles.push(a);
+                } else {
+                    miles.push({name: y, rating: -1, client_satisfaction: -1})
+                }
+            });
             await Project.findOneAndUpdate({ id: projects[n].id, company: req.session.company }, { template: name, milestones: miles, process })
         }
         res.json({'status':'success'});
