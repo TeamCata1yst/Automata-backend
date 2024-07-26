@@ -248,7 +248,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
             if(milestones){
                 let miles = [];
                 milestones.forEach(y => {
-                    let a = x.milestones.find(o => o.name == y);
+                    let a = projects[n].milestones.find(o => o.name == y);
                     if(a) {
                         miles.push(a);
                     } else {
@@ -256,7 +256,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
                     }
                 });
             }
-            await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, milestones: miles, process })
+            await Project.findOneAndUpdate({ id: projects[n].id, company: req.session.company }, { template: name, milestones: miles, process })
         }
         res.json({'status':'success'});
     } catch(error) {
