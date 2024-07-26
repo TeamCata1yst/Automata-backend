@@ -233,14 +233,14 @@ router.post('/template/update', isAdmin, async (req, res)=>{
         const { t } = totalTime(0, 0, 0, 0, [], process);
 	let temp = await Template.findOneAndUpdate({ _id: id, company: req.session.company }, { name, process, milestones, time: t  });
 	let projects = await Project.find({ template: temp.name, company: req.session.company });
-        projects.forEach( async x => {
+        for(let n = 0; n < projects.length; n++) {
             if(process) {
                 for(let i = 0; i < process.length; i++) {
-                    process[i].status = x.process[i].status;
-                    process[i].selected_resource = x.process[i].selected_resource;
-                    process[i].init_time = x.process[i].init_time;
-                    process[i].deadline = x.process[i].deadline;
-                    process[i].remark = x.process[i].remark;
+                    process[i].status = projects[n].process[i].status;
+                    process[i].selected_resource = projects[n].process[i].selected_resource;
+                    process[i].init_time = projects[n].process[i].init_time;
+                    process[i].deadline = projects[n].process[i].deadline;
+                    process[i].remark = projects[n].process[i].remark;
                 }
             }
             
@@ -256,7 +256,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
                 });
             }
             await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, milestones: miles, process })
-        });
+        }
         res.json({'status':'success'});
     } catch(error) {
 	console.log(error);
