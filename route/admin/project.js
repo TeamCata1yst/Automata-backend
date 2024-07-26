@@ -236,6 +236,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
         for(let n = 0; n < projects.length; n++) {
             if(process) {
                 for(let i = 0; i < process.length; i++) {
+                    console.log(projects[n].process[i])
                     process[i].status = projects[n].process[i].status;
                     process[i].selected_resource = projects[n].process[i].selected_resource;
                     process[i].init_time = projects[n].process[i].init_time;
