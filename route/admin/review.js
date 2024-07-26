@@ -15,7 +15,6 @@ router.post('/', isAdmin, async (req, res) => {
             }
             });
         res.status(201).json({'status':'success'});
-        console.log(a, "asdasdasdsadsadasdasdasdsadasdasdadasdsadsadasdasdadsadsaadsadas")
     } catch(error) {
         console.log(error);
         res.status(500).json({'status':'failed', 'error':'internal error'});

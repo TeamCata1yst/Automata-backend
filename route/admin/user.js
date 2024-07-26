@@ -24,7 +24,6 @@ router.get('/:dep_name', isAdmin, async (req, res)=>{
 	const result = await User.find({ department: dep_name, company: req.session.company });
 	
 	res.json({ 'status':'success', 'result': result });
-	console.log(result);
     } catch(error){
         console.log(error);
         res.status(500).json({ 'status':'failed', 'error':'internal error' });
@@ -34,9 +33,7 @@ router.get('/:dep_name', isAdmin, async (req, res)=>{
 router.post('/create', isAdmin, async (req, res)=>{
     try{
         const { name, gender, department, email, mobile_no, password } = req.body;
-	console.log("Create: ") 
         if(!name || (typeof gender == 'undefined') || !email || !department || !mobile_no || !password){
-            console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
 	/*
@@ -55,7 +52,6 @@ router.post('/create', isAdmin, async (req, res)=>{
         } else {
             const user = new User({ name, department, gender, email, mobile_no, password, company: req.session.company });
             result = await user.save();
-            console.log(result)
         }
 	await Department.findOneAndUpdate({company: req.session.company, department: {$elemMatch:{ name: department } }}, { $push:{ 'department.$.users': result.id }});
         res.json({'status':'success'});
@@ -79,9 +75,7 @@ router.post('/edit', isAdmin, async (req, res) => {
 router.post('/delete', isAdmin, async (req, res)=>{
     try{
         const { id, department } = req.body;
-	console.log("Delete: ")
         if(!id || !department){
-            console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         } 
 	const val = await User.findOne({ id, company: req.session.company });

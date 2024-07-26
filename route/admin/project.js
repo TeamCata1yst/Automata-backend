@@ -242,7 +242,6 @@ router.post('/template/update', isAdmin, async (req, res)=>{
                     process[i].deadline = x.process[i].deadline;
                     process[i].remark = x.process[i].remark;
                 }
-                await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, process })
             }
             
             if(milestones){
@@ -255,8 +254,8 @@ router.post('/template/update', isAdmin, async (req, res)=>{
                         miles.push({name: y, rating: -1, client_satisfaction: -1})
                     }
                 });
-                await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, milestones: miles })
             }
+            await Project.findOneAndUpdate({ id: x.id, company: req.session.company }, { template: name, milestones: miles, process })
         });
         res.json({'status':'success'});
     } catch(error) {
@@ -268,7 +267,7 @@ router.post('/template/update', isAdmin, async (req, res)=>{
 router.post('/priority', isAdmin, async (req, res) => {
     try {
         await req.body.projects.forEach(async x => {
-            let a = await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, { priority: x.priority, init_time: new Date() });
+            await Project.findOneAndUpdate({ id: x.id, company: req.session.company}, { priority: x.priority, init_time: new Date() });
         });
         res.json({'status':'success'});
     } catch(error) {

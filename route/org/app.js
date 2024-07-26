@@ -28,7 +28,6 @@ router.get('/', isAdmin, async (req, res) => {
 
 router.post('/edit', isAdmin, async (req, res) => {
     try {
-        console.log(req.session, req.body)
         if(!req.session.company_info) {
             var v = new Company(req.body)
             await v.save()

@@ -34,7 +34,8 @@ router.post("/", (req, res) => {
             res.json({'status':'failed', 'error':'wrong input'});
         }
     } catch(error){
-        console.log({'status':'failed', 'error':'internal error'});
+        console.log(error);
+        res.status(500).json({'status':'failed', 'error':'internal error'});
     }
 });
 
@@ -54,7 +55,8 @@ router.post("/signup", async (req, res) => {
             res.json({'status':'failed', 'error':'wrong input'});
         }
     } catch(error){
-        console.log({'status':'failed', 'error':'internal error'});
+        console.log(error);
+        res.status(500).json({'status':'failed', 'error':'internal error'});
     }
 });
 

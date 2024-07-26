@@ -14,7 +14,6 @@ router.post('/', isClient, async (req, res) => {
                 'milestones.$.client_satisfaction': rating
             }
             });
-        console.log(a, id, milestone, rating, req.session.id)
         res.status(201).json({'status':'success'});
     } catch(error) {
         console.log(error);

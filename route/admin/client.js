@@ -17,7 +17,6 @@ router.post('/create', isAdmin, async (req, res)=>{
         const { name, email, mobile_no } = req.body;
         
         if(!name || !email || !mobile_no ){
-            console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
         const client = new Client({ name, email, mobile_no, company: req.session.company });

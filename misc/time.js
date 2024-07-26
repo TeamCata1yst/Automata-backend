@@ -34,7 +34,6 @@ const totalTime = (start, now_t, init_time, hours, weekend, process) => {
                         }
 
                         while(left_over > hours[0] + hours[1]/10) {
-                            console.log("i")
                             if(weekend.includes(now_t.getDay())) {
                                 now_t.setDate(now_t.getDate() + 1) 
                             } else {

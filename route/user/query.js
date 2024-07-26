@@ -8,14 +8,11 @@ router.get('/', isUser, async (req, res) => {
         const { id, company } = req.session;
         const val = await Project.find({ resources: id, company })
         var arr = []
-        console.log(val)
         val.forEach((ele, i)=>{
             arr.push(ele.id)
         })
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaa", arr)
         const queries = await Query.find({ company, project_id: { "$in": arr }})
         res.json({'status':'success', 'result': queries})
-        console.log("bbbbbbbbbbbbbbbbbbbbbbbbbb", queries)
     } catch(error) {
         console.log(error)
         res.status(500).json({'status':'failed', 'error':'internal error'})

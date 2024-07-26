@@ -16,7 +16,6 @@ router.post('/create', isAdmin, async (req, res)=>{
     try{
         const { name } = req.body;
         if(!name){
-            console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
         await Department.findOneAndUpdate({ company: req.session.company }, { $push:{ department: { name: name.trim() } } });
@@ -31,7 +30,6 @@ router.post('/delete', isAdmin, async (req, res)=>{
     try{
         const { name } = req.body;
         if(!name){
-            console.log(req.body);
             return res.json({'status':'failed', 'error':'missing parameters'});
         }
         await Department.findOneAndUpdate({ company: req.session.company }, { $pull:{ department: { name } } });

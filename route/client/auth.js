@@ -8,7 +8,6 @@ router.post('/login', (req, res) => {
         const { email, password, company } = req.body;
         const email_verify = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.exec(email.toLowerCase());
         if(email_verify){
-            console.log(req.body, email_verify[0])
             Client.findOne({email: email_verify[0], company })
                 .exec()
                 .then(user => {
@@ -31,7 +30,8 @@ router.post('/login', (req, res) => {
             res.json({'status':'failed', 'error':'wrong input'});
         }
     } catch(error){
-        console.log({'status':'failed', 'error':'internal error'});
+        console.log(error);
+        res.status(500).json({'status':'failed', 'error':'internal error'});
     }
 });
 

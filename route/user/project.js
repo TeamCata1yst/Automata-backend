@@ -26,7 +26,6 @@ router.get('/', isUser, async (req, res)=>{
                 }
             }//);
 	});
-        console.log(arr);
         if(arr.length == 0) {
             return res.status(200).json([]);
         }
@@ -50,13 +49,11 @@ router.get('/', isUser, async (req, res)=>{
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
                 }
-                console.log(now_t.getHours(), now_t.getDate())
                 if(now_t.getHours() + now_t.getMinutes()/60 >= init_time[0] + init_time[1]/60 && now_t.getHours() + now_t.getMinutes()/60 < (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10)) {
                     element.init_time = new Date(Date.parse(now_t))
                     var after_t = new Date(Date.parse(now_t) + element.time_req)
                     if((after_t.getHours() + after_t.getMinutes()/60 >= init_time[0] + init_time[1]/60) && (after_t.getHours() + after_t.getMinutes()/60 < (init_time[0] + hours[0]) + (init_time[1]/60 + hours[1]/10)) && now_t.getDate() == after_t.getDate() && now_t.getFullYear() == after_t.getFullYear() && now_t.getMonth() == after_t.getMonth()) {
                         let val = element.time_req/(1000*60*60)
-                        console.log("yes", now_t.getHours(), (after_t.getHours() + after_t.getMinutes()/60), init_time[0], hours[0], (init_time[1]/60 + hours[1]/10))
                         now_t.setHours(now_t.getHours() + Math.floor(val), now_t.getMinutes() + ((val*10)%10)*6) 
                         element.deadline = new Date(Date.parse(now_t))
                     } else {
@@ -70,7 +67,6 @@ router.get('/', isUser, async (req, res)=>{
                         }
 
                         while(left_over > hours[0] + hours[1]/10) {
-                            console.log("i")
                             if(weekend.includes(now_t.getDay())) {
                                 now_t.setDate(now_t.getDate() + 1) 
                             } else {
@@ -102,7 +98,6 @@ router.get('/', isUser, async (req, res)=>{
                     now_t.setHours(now_t.getHours() + Math.floor(left_over), now_t.getMinutes() + ((left_over*10)%10)*6)
                     element.deadline = new Date(Date.parse(now_t))
                 }
-                console.log(now_t.getHours(), now_t.getDate())
             
         });
 
