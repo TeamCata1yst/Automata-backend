@@ -68,6 +68,9 @@ const schema = new mongoose.Schema({
         status: {
             type: Number,
             default: 0
+        },
+        deadline: {
+            type: String,
         }
     }
 });
