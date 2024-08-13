@@ -53,7 +53,7 @@ router.get('/', isUser, async (req, res)=>{
                             if(x.status == 3) {
                                 x.task.status = 1
                             }
-                            arr.push({ ...x.task, project_name: project.name, project_id: project.id, query: true })
+                            arr.push({ ...x.task, query_id: x.id, project_name: project.name, project_id: project.id, query: true })
                         });
                     }
     
