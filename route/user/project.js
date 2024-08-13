@@ -26,7 +26,7 @@ router.get('/', isUser, async (req, res)=>{
         const { id } = req.session;
         const projects = await Project.find({ resources: id, company: req.session.company });
         const com = await Company.findOne({ comp_name: req.session.company })
-        const queries = await Query.find({ resource_id: id, company: req.session.company, status: 2});
+        const queries = await Query.find({ resource_id: id, company: req.session.company, $or: [ {status: 2}, {status: 3} ]});
 
         var c = com.start_time.split(':')
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
@@ -50,7 +50,9 @@ router.get('/', isUser, async (req, res)=>{
                     if(qu.length > 0) {
                         qu.forEach(x => {
                             delete x.task.before_id;
-                            
+                            if(x.status == 3) {
+                                x.task.status = 1
+                            }
                             arr.push({ ...x.task, project_name: project.name, project_id: project.id, query: true })
                         });
                     }
