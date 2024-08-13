@@ -2,29 +2,61 @@ const router = require('express').Router();
 const { isUser } = require('../../middleware/priv_check'); 
 const { Project } = require('../../model/projectSchema');
 const { Company } = require('../../model/companySchema');
-const { totalTime } = require('../../misc/time')
+const { Query } = require('../../model/querySchema');
+const { totalTime } = require('../../misc/time');
+
+router.get('/id/:id', isUser, async (req, res) => {
+    try {
+        const project = await Project.findOne({ id: req.params.id, company: req.session.company });
+        let arr = [];
+        project.process.forEach( (task, index) => {
+            if(task.selected_resource == req.session.id) {
+                arr.push(task)
+            }
+	});
+        res.json({'status':'success', result: arr});
+    } catch(error) {
+        console.log(error);
+        res.json({'status':'failed', 'error':'internal error'})
+    }     
+});
 
 router.get('/', isUser, async (req, res)=>{
     try {
         const { id } = req.session;
         const projects = await Project.find({ resources: id, company: req.session.company });
         const com = await Company.findOne({ comp_name: req.session.company })
-        
+        const queries = await Query.find({ resource_id: id, company: req.session.company, status: 2});
+
         var c = com.start_time.split(':')
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
         const arr = [];
+
         projects.forEach( (project, index) => {
-            for(let i = project.process[0].next[0]; i < project.process.length; i++) {//project.process.forEach( (elem, _) => {
+            let q = queries.filter( x => x.project_id == project.id);
+            for(let i = project.process[0].next[0]; i < project.process.length; i++) {
                 if(project.process[i].selected_resource == id) {
                     project.process[i].project_name = project.name;
                     project.process[i].project_id = project.id
                     project.process[i].date = project.date
                     project.process[i].priority = project.priority;
+                    project.process[i].buffer = project.buffer;
                     project.process[i].init_time = project.init_time;
                     arr.push(project.process[i])
+                    
+                    let qu = q.filter(x => x.task.before_id == project.process[i].task_id );
+                   
+                    if(qu.length > 0) {
+                        qu.forEach(x => {
+                            delete x.task.before_id;
+                            
+                            arr.push({ ...x.task, project_name: project.name, project_id: project.id, query: true })
+                        });
+                    }
+    
                 }
-            }//);
+            }
 	});
         if(arr.length == 0) {
             return res.status(200).json([]);
@@ -44,7 +76,6 @@ router.get('/', isUser, async (req, res)=>{
                     }
                 }   
                 
-
                 while(weekend.includes(now_t.getDay())) {
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
@@ -82,7 +113,8 @@ router.get('/', isUser, async (req, res)=>{
                         now_t.setDate(now_t.getDate() + 1)
                     }
                     now_t.setHours(init_time[0], init_time[1])
-                    while(weekend.includes(now_t)) {
+                    
+                    while(weekend.includes(now_t.getDay())) {
                         now_t.setDate(now_t.getDate() + 1)
                     }
                     element.init_time = new Date(Date.parse(now_t))

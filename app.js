@@ -25,6 +25,7 @@ app.use('/user/project', require('./route/user/project'));
 app.use('/client/auth', require('./route/client/auth'));
 app.use('/client/review', require('./route/client/review'));
 app.use('/client/dashboard', require('./route/client/dashboard'));
+app.use('/client/user', require('./route/client/user'));
 
 // Admin APIs
 app.use('/admin/auth', require('./route/admin/auth'));
@@ -34,6 +35,7 @@ app.use('/admin/profile', require('./route/admin/profile'));
 app.use('/admin/project', require('./route/admin/project'));
 app.use('/admin/review', require('./route/admin/review'));
 app.use('/admin/department', require('./route/admin/department'))
+app.use('/admin/query', require('./route/admin/query'));
 
 // Org APIs
 app.use('/org/', require('./route/org/app'))

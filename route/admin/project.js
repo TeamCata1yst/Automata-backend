@@ -4,6 +4,7 @@ const { Client } = require('../../model/userSchema');
 const { Company } = require('../../model/companySchema')
 const { isAdmin } = require('../../middleware/priv_check');
 const { totalTime } = require('../../misc/time');
+const { Query } = require('../../model/querySchema');
 
 router.get('/', isAdmin, async (req, res)=>{
     try {
@@ -160,7 +161,7 @@ router.post('/create', isAdmin, async (req, res)=>{
         milestones.forEach(x => {
             obj.push({name: x, rating: -1})
         })
-        const priority = await Project.countDocuments();
+        const priority = await Project.countDocuments({ company: req.session.company });
 	const project = new Project({name, client, client_id: val.id, buffer, template, city, process, priority, deadline: date, resources, remaining_time: t, company: req.session.company, init_time: new Date(), milestones: obj });
 	await project.save();
         
@@ -179,6 +180,7 @@ router.post('/delete', isAdmin, async (req, res)=>{
         if(val.priority == 0) {
             Project.findOneAndUpdate({ company: req.session.company, priority: 0 }, { init_time: new Date()});
         }
+        await Query.deleteMany({project_id: id});
         res.json({'status':'success'});
     } catch(error) {
         res.status(500).json({"status":"failed", "error":"internal error"});

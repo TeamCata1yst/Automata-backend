@@ -51,8 +51,8 @@ router.get('/queries', isClient, async (req, res) =>{
 
 router.post('/queries/add', isClient, async (req, res) =>{
     try {
-        const {project_id, client_id, subject, description} = req.body;
-        const project = new Query({ company: req.session.company, project_id, client_id, subject, description })
+        const {project_id, client_id, subject, resource_id, description} = req.body;
+        const project = new Query({ company: req.session.company, project_id, client_id, resource_id, subject, description })
         await project.save()
         res.json({'status':'success'})
     } catch(error) {
