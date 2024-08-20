@@ -44,13 +44,9 @@ const schema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    task_status: {
-        type: Number,
-        default: 0
-    },
     task: {
         before_id: {
-            type: Number
+            type: String
         },
         name: {
             type: String
@@ -71,6 +67,7 @@ const schema = new mongoose.Schema({
         },
         deadline: {
             type: String,
+            default: "NONE"
         }
     }
 });

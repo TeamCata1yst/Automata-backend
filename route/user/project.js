@@ -26,40 +26,54 @@ router.get('/', isUser, async (req, res)=>{
         const { id } = req.session;
         const projects = await Project.find({ resources: id, company: req.session.company });
         const com = await Company.findOne({ comp_name: req.session.company })
-        const queries = await Query.find({ resource_id: id, company: req.session.company, $or: [ {status: 2}, {status: 3} ]});
+        var queries = await Query.find({ resource_id: id, company: req.session.company, $or: [ { status: 2 }, { status: 3 } ]});
 
         var c = com.start_time.split(':')
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
-        const arr = [];
-
-        projects.forEach( (project, index) => {
-            let q = queries.filter( x => x.project_id == project.id);
-            for(let i = project.process[0].next[0]; i < project.process.length; i++) {
-                if(project.process[i].selected_resource == id) {
-                    project.process[i].project_name = project.name;
-                    project.process[i].project_id = project.id
-                    project.process[i].date = project.date
-                    project.process[i].priority = project.priority;
-                    project.process[i].buffer = project.buffer;
-                    project.process[i].init_time = project.init_time;
-                    arr.push(project.process[i])
+        var arr = [];
+        console.log("before", queries);
+        for(let n = 0; n < projects.length; n++) { 
+            for(let i = projects[n].process[0].next[0]; i < projects[n].process.length; i++) {
+                if(projects[n].process[i].selected_resource == id) {
+                    projects[n].process[i].project_name = projects[n].name;
+                    projects[n].process[i].project_id = projects[n].id;
+                    projects[n].process[i].date = projects[n].date;
+                    projects[n].process[i].priority = projects[n].priority;
+                    projects[n].process[i].buffer = projects[n].buffer;
+                    projects[n].process[i].init_time = projects[n].init_time;
+                    arr.push(projects[n].process[i])
                     
-                    let qu = q.filter(x => x.task.before_id == project.process[i].task_id );
-                   
+                    let qu = queries.filter( x => x.task.before_id == `${projects[n].id}_${projects[n].process[i].task_id}`);
+                    
                     if(qu.length > 0) {
-                        qu.forEach(x => {
-                            delete x.task.before_id;
-                            if(x.status == 3) {
-                                x.task.status = 1
+                        for(let j = 0; j < qu.length; j++) {
+                            delete qu[j].task.before_id;
+                            if(qu[j].status == 3) {
+                                qu[j].task.status = 1
+                            } else {
+                                qu[j].task.status = 0
                             }
-                            arr.push({ ...x.task, query_id: x.id, project_name: project.name, project_id: project.id, query: true })
-                        });
+                            let project_name = await Project.findOne({ id: qu[j].project_id });
+                            arr.push({ ...qu[j].task, init_time: qu[j].init_date, query_id: qu[j].id, project_name: project_name.name, project_id: qu[j].project_id, query: true }) 
+                        }
                     }
-    
+                    queries = queries.filter(x => !qu.includes(x));
                 }
             }
-	});
+        } 
+       console.log("after: ", queries); 
+        for(let j = 0; j < queries.length; j++) {
+            delete queries[j].task.before_id;
+            if(queries[j].status == 3) {
+                queries[j].task.status = 1
+            } else {
+                queries[j].task.status = 0
+            }
+            let project_name = await Project.findOne({ id: queries[j].project_id });
+            arr.push({ ...queries[j].task, init_time: queries[j].init_date, query_id: queries[j].id, project_name: project_name.name, project_id: queries[j].project_id, query: true }) 
+        }
+
         if(arr.length == 0) {
             return res.status(200).json([]);
         }
@@ -77,7 +91,6 @@ router.get('/', isUser, async (req, res)=>{
                         return
                     }
                 }   
-                
                 while(weekend.includes(now_t.getDay())) {
                     now_t.setHours(init_time[0], init_time[1])    
                     now_t.setDate(now_t.getDate() + 1)
@@ -132,7 +145,7 @@ router.get('/', isUser, async (req, res)=>{
                     now_t.setHours(now_t.getHours() + Math.floor(left_over), now_t.getMinutes() + ((left_over*10)%10)*6)
                     element.deadline = new Date(Date.parse(now_t))
                 }
-            
+                
         });
 
 
@@ -149,9 +162,8 @@ router.get('/', isUser, async (req, res)=>{
                 let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
 
-                if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) {
-                    if(task.status != true) 
-                        tasks[i].tasks.push(task)
+                if(tasks[i].date.getDate() == t.getDate() && tasks[i].date.getMonth() == t.getMonth() && tasks[i].date.getFullYear() == t.getFullYear()) { 
+                    tasks[i].tasks.push(task)
                     
                     val = 1
                     break
@@ -160,11 +172,11 @@ router.get('/', isUser, async (req, res)=>{
             if(val == 0) {
                 let t = new Date(task.init_time)
                 t.setHours(parseInt(c[0]), parseInt(c[1]))
-                if(task.status != true)
-                    tasks.push({ date: t, tasks:[ task ]})
+            
+                tasks.push({ date: t, tasks:[ task ]})
             }
         });
-
+        console.log("arr: ", arr, "tasks: ", tasks)
         res.status(200).json(tasks);
     } catch(error) {
 	console.log(error);

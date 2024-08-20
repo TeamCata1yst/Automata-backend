@@ -3,7 +3,6 @@ const { User, Department } = require('../../model/userSchema');
 const { Project } = require('../../model/projectSchema');
 const { isAdmin } = require('../../middleware/priv_check');
 
-
 router.get('/', isAdmin, async (req, res) => {
     try {
 	const users = await User.find({ company: req.session.company });
