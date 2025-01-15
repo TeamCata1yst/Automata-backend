@@ -32,7 +32,6 @@ router.get('/', isUser, async (req, res)=>{
         projects.sort((a, b)=> parseInt(a.priority) - parseInt(b.priority))
     
         var arr = [];
-        console.log("before", queries);
         for(let n = 0; n < projects.length; n++) { 
             for(let i = projects[n].process[0].next[0]; i < projects[n].process.length; i++) {
                 if(projects[n].process[i].selected_resource == id) {
@@ -62,7 +61,6 @@ router.get('/', isUser, async (req, res)=>{
                 }
             }
         } 
-       console.log("after: ", queries); 
         for(let j = 0; j < queries.length; j++) {
             delete queries[j].task.before_id;
             if(queries[j].status == 3) {
@@ -176,7 +174,6 @@ router.get('/', isUser, async (req, res)=>{
                 tasks.push({ date: t, tasks:[ task ]})
             }
         });
-        console.log("arr: ", arr, "tasks: ", tasks)
         res.status(200).json(tasks);
     } catch(error) {
 	console.log(error);

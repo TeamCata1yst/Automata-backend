@@ -18,6 +18,7 @@ app.use(express.json());
 
 // User APIs
 app.use('/user/auth', require('./route/user/auth'));
+app.use('/user/review', require('./route/user/review'));
 app.use('/user/query', require('./route/user/query'));
 app.use('/user/project', require('./route/user/project'));
 
