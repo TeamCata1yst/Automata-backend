@@ -23,6 +23,18 @@ router.post('/add', isAdmin, async (req, res) => {
         console.log(error)
         res.status(500).json({'status':'failed', 'error':'internal error'})
     }
+});
+
+
+router.post('/delete', isAdmin, async (req, res) => {
+    try {
+        const { id } = req.body;
+        await Query.findOneAndDelete({ company: req.session.company, id });
+        res.json({'status':'success'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({'status':'failed', 'error':'internal error'})
+    }
 })
 
 module.exports = router;
