@@ -25,6 +25,16 @@ router.post('/add', isAdmin, async (req, res) => {
     }
 });
 
+router.post('/edit', isAdmin, async (req, res) => {
+    try {
+        const { id, description } = req.body;
+        await Query.findOneAndUpdate({ company: req.session.company, id }, { description });
+        res.json({'status':'success'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({'status':'failed', 'error':'internal error'})
+    }
+})
 
 router.post('/delete', isAdmin, async (req, res) => {
     try {

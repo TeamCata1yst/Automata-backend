@@ -1,7 +1,13 @@
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
+    id: {
+        type: String
+    },
     comp_name: {
+        type: String
+    },
+    logo: {
         type: String
     },
     address: {

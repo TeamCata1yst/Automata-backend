@@ -1,8 +1,10 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const app = express();
 require('dotenv').config()
 const mongoose = require('mongoose');
+
 
 mongoose.connect(process.env.DB_ADDR).then(()=>{
     console.log('Connection successful');
@@ -12,8 +14,10 @@ mongoose.connect(process.env.DB_ADDR).then(()=>{
 });
 
 app.use(cors({
-    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000", "https://7c46-182-69-178-118.ngrok-free.app"]
+    origin: ["https://coral-app-he6oc.ondigitalocean.app", "http://localhost:3000"]
 }));
+
+app.use(fileUpload());
 app.use(express.json());
 
 // User APIs
