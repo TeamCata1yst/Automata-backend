@@ -7,7 +7,7 @@ This is the backend codebase for the automate business project by Genre of Desig
 First, clone the repo:
 
 ```
-git clone https://github.com/AutomatedBusiness/GenreOfDesign.git
+git clone https://github.com/AutomatedBusiness/backend-ab.git && cd backend-ab
 ```
 
 Next, install the requirements:
