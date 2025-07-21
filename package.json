@@ -1,13 +1,13 @@
 {
-  "name": "GenreOfDesign",
+  "name": "Automata",
   "version": "1.0.0",
-  "description": "An Office management suite for Genre of Design",
+  "description": "A project management system by Team Catalyst",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "author": "Soluva Tech Pvt. Ltd.",
+  "author": "Team Catalyst",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
