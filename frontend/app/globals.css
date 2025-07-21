@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Yellix";
+    src: url("/Yellix-Bold.ttf");
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Yellix";
+    src: url("/Yellix-SemiBold.ttf");
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Yellix";
+    src: url("/Yellix-Regular.ttf");
+    font-weight: 400;
+}
+
+.side-nav-toggle {
+    z-index: 100;
+    width: 1.5rem;
+    aspect-ratio: 1;
+    background: url("/menu.svg");
+    border: 0;
+    background-position: right;
+    background-size: cover;
+    transition: 200ms background-position;
+}
+
+#side-nav[data-visible="true"] {
+    transform: translateX(0%);
+}
+
+.side-nav-toggle[aria-expanded="true"] {
+    background-position: left;
+}
+
+@layer components {
+    * {
+        @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20;
+    }
+    input,
+    select,
+    .fileInput,
+    .cancelButton,
+    .queryButton,
+    textarea {
+        @apply px-6 py-3 border-3 border-[#343434]/40 bg-black outline-none transition duration-300 w-full rounded-md text-sm text-white/50 placeholder:text-white/20 focus:text-white appearance-none focus:border-[#343434]/70 focus:placeholder:text-white/30;
+    }
+    .ratingForm input {
+        @apply w-max px-2 py-2 text-base border-none bg-transparent text-white;
+    }
+    .ratingForm input[type="range"] {
+        @apply w-96 px-0 py-0 border-none;
+    }
+    select:has(option[value="none"]:checked) {
+        @apply text-white/20;
+    }
+    .fileInput {
+        @apply text-white/20;
+    }
+    option {
+        @apply text-white bg-black font-sans;
+    }
+    option[value="none"] {
+        @apply text-white/20;
+    }
+    td input {
+        @apply bg-transparent border-none;
+    }
+    input:disabled,
+    button:disabled {
+        @apply opacity-80 grayscale-[75%];
+    }
+
+    select,
+    input[name="facebook"],
+    input[name="linkedin"],
+    input[name="instagram"],
+    input[name="twitter"],
+    .fileInput,
+    .labelledInput {
+        background-image: url("/arrow.svg");
+        background-size: 1rem 1rem;
+        background-repeat: no-repeat;
+        background-position: calc(100% - 1.5rem);
+        padding-right: 3.5rem;
+    }
+    input[name="facebook"] {
+        background-image: url("/facebook.svg");
+    }
+    .labelledInput[name="location"] {
+        background-image: url("/location.svg");
+    }
+    .labelledInput[name="buffer"] {
+        background-image: url("/buffer.svg");
+    }
+    .labelledInput[name="p_name"],
+    .labelledInput[name="project_name"],
+    .labelledInput[name="c_name"],
+    .labelledInput[name="client_name"] {
+        background-image: url("/name.svg");
+    }
+    .labelledInput[name="c_email"],
+    .labelledInput[name="client_email"] {
+        background-image: url("/mail.svg");
+    }
+    .labelledInput[name="c_mobile"],
+    .labelledInput[name="client_mobile"] {
+        background-image: url("/phone.svg");
+    }
+    input[name="linkedin"] {
+        background-image: url("/linkedin.svg");
+    }
+    input[name="instagram"] {
+        background-image: url("/instagram.svg");
+    }
+    input[name="twitter"] {
+        background-image: url("/twitter.svg");
+    }
+    .fileInput {
+        background-image: url("/file.svg");
+    }
+    label {
+        cursor: pointer;
+    }
+    input[type="submit"],
+    input[type="button"],
+    .addButton,
+    .queryButton,
+    .submitButton,
+    .cancelButton {
+        @apply bg-auto-red text-white border-none cursor-pointer w-max px-10 py-2 rounded-md text-sm;
+    }
+    .buttonBox {
+        @apply fixed bottom-6 right-6 rounded-md bg-black/30 backdrop-blur-sm p-4 flex gap-4;
+    }
+    input[type="button"] {
+        @apply px-5;
+    }
+    .cancelButton {
+        @apply bg-black;
+    }
+    input[type="button"][value="+"] {
+        @apply bg-[#343434]/80 h-8 w-8 px-0 py-0;
+    }
+    input:read-only,
+    textarea:read-only {
+        @apply text-white;
+    }
+    input[type="checkbox"] {
+        @apply cursor-pointer w-8 p-0 h-8;
+    }
+    input[type="checkbox"]:checked {
+        @apply bg-white/20 after:content-['✓'] after:text-white after:absolute relative after:top-1 after:left-2;
+    }
+    .stars {
+        background-clip: text;
+    }
+    input[type="range"] {
+        @apply appearance-none w-96 bg-white/10 h-2 rounded-full;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        @apply appearance-none w-4 h-4 bg-auto-red rounded-full cursor-pointer;
+    }
+}

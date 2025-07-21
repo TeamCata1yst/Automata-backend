@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 27.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="svg4"
+   x="0px"
+   y="0px"
+   viewBox="0 0 768 384"
+   xml:space="preserve"
+   sodipodi:docname="menu.svg"
+   width="768"
+   height="384"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs12" />
+<style
+   type="text/css"
+   id="style2">
+	.st0{fill:#FFFFFF;}
+</style>
+<sodipodi:namedview
+   bordercolor="#000000"
+   borderopacity="0.25"
+   id="namedview6"
+   inkscape:current-layer="svg4"
+   inkscape:cx="200.14422"
+   inkscape:cy="215.26623"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:pagecheckerboard="0"
+   inkscape:pageopacity="0.0"
+   inkscape:showpageshadow="2"
+   inkscape:window-height="705"
+   inkscape:window-maximized="1"
+   inkscape:window-width="1366"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:zoom="0.56209467"
+   pagecolor="#ffffff"
+   showgrid="false">
+	</sodipodi:namedview>
+<rect
+   y="0"
+   class="st0"
+   width="383.5719"
+   height="64"
+   id="rect5"
+   style="fill:#ffffff;fill-opacity:1;stroke-width:0.925304"
+   x="384" />
+<rect
+   x="384.4281"
+   y="160.00002"
+   class="st0"
+   width="383.5719"
+   height="64"
+   id="rect7"
+   style="fill:#ffffff;fill-opacity:1;stroke-width:0.925304" />
+<rect
+   x="384.4281"
+   y="320"
+   class="st0"
+   width="383.5719"
+   height="64"
+   id="rect9"
+   style="fill:#ffffff;fill-opacity:1;stroke-width:0.925304" />
+<g
+   id="g202"
+   transform="matrix(-0.99952828,0,0,-0.99966564,383.90626,447.91455)"
+   style="fill:#ffffff;fill-opacity:1">
+	<g
+   id="g194"
+   style="fill:#ffffff;fill-opacity:1">
+		<line
+   class="st0"
+   x1="25"
+   y1="89.099998"
+   x2="359"
+   y2="422.89999"
+   id="line190"
+   style="fill:#ffffff;fill-opacity:1" />
+		
+			<rect
+   x="156.5"
+   y="19.9"
+   transform="matrix(0.7069,-0.7073,0.7073,0.7069,-124.7989,210.8501)"
+   class="st0"
+   width="71.099998"
+   height="472.10001"
+   id="rect192"
+   style="fill:#ffffff;fill-opacity:1" />
+	</g>
+	<g
+   id="g200"
+   style="fill:#ffffff;fill-opacity:1">
+		<line
+   class="st0"
+   x1="359"
+   y1="89.099998"
+   x2="25"
+   y2="422.89999"
+   id="line196"
+   style="fill:#ffffff;fill-opacity:1" />
+		
+			<rect
+   x="-44.099998"
+   y="220.5"
+   transform="matrix(0.7073,-0.7069,0.7069,0.7073,-124.769,210.6414)"
+   class="st0"
+   width="472.10001"
+   height="71.099998"
+   id="rect198"
+   style="fill:#ffffff;fill-opacity:1" />
+	</g>
+</g></svg>
