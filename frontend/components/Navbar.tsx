@@ -145,7 +145,7 @@ export default function Navbar({ instance, username, avatarUrl }: Props) {
           className="text-xl text-white font-semibold tracking-tight flex items-center gap-3"
           href="/"
         >
-          <Image src="/logo.svg" alt="logo" width={40} height={40} />
+          <Image src="/logo.jpg" alt="logo" width={35} height={35} />
           <span className="font-primary tracking-tight">Automata</span>
         </Link>
       </div>

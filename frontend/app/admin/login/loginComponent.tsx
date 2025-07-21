@@ -34,8 +34,7 @@ export default function Home() {
       <Navbar instance="login" />
       <div className="flex -m-32 -mt-48">
         <div className="w-full min-h-screen flex items-center justify-center bg-[#010101]">
-          <div className="flex flex-col gap-6 z-10 items-center py-16 px-24 rounded-lg border-2 border-white/10 relative">
-            <div className="bg-[url(/bg-1.png)] -z-10 bg-cover bg-center absolute top-0 left-0 bottom-0 right-0 opacity-30"></div>
+          <div className="flex flex-col gap-6 z-10 items-center py-12 px-24 rounded-lg bg-white/5 relative">
             <h1 className="font-primary text-white font-bold text-4xl">
               Admin Login
             </h1>

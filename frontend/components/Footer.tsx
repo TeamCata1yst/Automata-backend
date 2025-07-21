@@ -47,13 +47,12 @@ export default function Footer({ right }: Props) {
           right ? "right-6 text-right" : "left-6"
         }`}
       >
-        <div className="flex gap-3">
-          <Image src="/logo.svg" alt="logo" width={40} height={40} />
+        <div className="flex gap-3 items-center">
+          <Image src="/logo.jpg" alt="logo" width={35} height={35} />
           <span className="border-l-2 border-auto-red pl-3 font-primary tracking-tight text-white">
             Automata
           </span>
         </div>
-        <div ref={tprf} className="flex gap-2"></div>
         <div
           ref={drf}
           className="font-primary leading-5 text-white text-xs tracking-tight"
