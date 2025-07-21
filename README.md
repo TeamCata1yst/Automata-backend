@@ -1,6 +1,12 @@
 # Automata
 
-This is a project and human resource management system designed to work at a multiorganisational level.
+Automata is a comprehensive, multi-organizational Project and Human Resource Management System designed to support resource coordination, project tracking, and workforce management across interconnected enterprises.
+
+## Technology & Architecture
+
+- **Backend:** Express.js
+- **Frontend:** Next.js
+- **Database:** MongoDB
 
 ## Getting Started
 
