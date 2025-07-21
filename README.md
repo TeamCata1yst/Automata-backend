@@ -14,5 +14,5 @@ Specific README files for [backend](https://github.com/TeamCata1yst/automata/tre
 
 ## Test Credentials
 
-- **Username:**
-- **Password:**
+- **Email:** automatatest@yopmail.com
+- **Password:** Test@123
