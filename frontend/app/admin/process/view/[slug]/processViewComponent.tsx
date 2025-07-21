@@ -7,7 +7,7 @@ import { faEye, faClose } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import Link from "next/link";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 type Props = {
   accessToken: string;

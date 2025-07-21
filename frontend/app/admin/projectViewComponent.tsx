@@ -19,7 +19,7 @@ type Props = {
   accessToken: string;
 };
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 export default function Home({ accessToken }: Props) {
   const a = accessToken.split(".")[1];

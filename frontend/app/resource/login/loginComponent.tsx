@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 export default function Home() {
   const submitForm = async (e: any) => {

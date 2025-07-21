@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

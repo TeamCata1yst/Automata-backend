@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileUpload } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 type Props = {
   accessToken: string;

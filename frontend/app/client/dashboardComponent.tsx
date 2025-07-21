@@ -10,7 +10,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 type Props = {
   accessToken: string;

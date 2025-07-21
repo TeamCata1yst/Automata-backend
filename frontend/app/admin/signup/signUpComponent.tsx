@@ -4,7 +4,7 @@ import Video from "@/components/Video";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 
-const api = process.env.APILINK;
+const api = process.env.NEXT_PUBLIC_APILINK;
 
 export default function Home() {
   const handleSubmit = async (e: any) => {
